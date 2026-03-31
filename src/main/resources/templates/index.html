@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"></html>
+<head>
+    <meta charset="UTF-8">
+    <title>VnExpress Clone - Tin tức mới nhất</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { 
+            background-color: #fff; 
+            font-family: 'Roboto', sans-serif; 
+            color: #222;
+        }
+        
+        /* Navbar */
+        .navbar { border-bottom: 1px solid #e5e5e5; padding: 0; }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
+        .nav-link { 
+            font-weight: 500; text-transform: uppercase; font-size: 0.85rem; 
+            padding: 15px 20px !important; color: #333 !important;
+            border-bottom: 3px solid transparent; transition: all 0.3s;
+        }
+        .nav-link:hover { color: #9f224e !important; border-bottom: 3px solid #9f224e; }
+
+        /* Tiêu đề bài viết */
+        .news-title { 
+            font-family: 'Playfair Display', serif; 
+            font-weight: 700; color: #222; text-decoration: none; 
+            line-height: 1.3; display: block; transition: color 0.2s;
+        }
+        .news-title:hover { color: #9f224e; }
+        
+        .title-lead { font-size: 2rem; }
+        .title-sub { font-size: 1.2rem; }
+        .title-sidebar { font-size: 0.95rem; font-family: 'Roboto', sans-serif; }
+
+        /* Tóm tắt nội dung (Cắt bớt chữ nếu quá dài) */
+        .news-summary {
+            color: #444; font-size: 0.95rem; line-height: 1.5; margin-top: 10px;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+        }
+
+        /* Hiệu ứng Ảnh (Zoom nhẹ khi hover) */
+        .thumb-wrapper { overflow: hidden; border-radius: 4px; display: block; }
+        .thumb-wrapper img {
+            width: 100%; transition: transform 0.4s ease;
+        }
+        .thumb-wrapper:hover img { transform: scale(1.05); }
+        
+        .img-lead { height: 400px; object-fit: cover; }
+        .img-sub { height: 120px; object-fit: cover; width: 100%; }
+
+        /* Cột Sidebar */
+        .sidebar-heading {
+            font-weight: 700; color: #9f224e; text-transform: uppercase;
+            border-bottom: 2px solid #9f224e; padding-bottom: 8px; margin-bottom: 20px;
+            display: inline-block;
+        }
+        .sidebar-item { border-bottom: 1px dashed #ddd; padding-bottom: 12px; margin-bottom: 12px; }
+        .sidebar-item:last-child { border-bottom: none; }
+        .rank-number {
+            font-size: 2rem; font-weight: 900; color: #e5e5e5; 
+            line-height: 1; margin-right: 15px; font-family: 'Playfair Display', serif;
+        }
+
+        /* Nút phân trang */
+        .pagination-box a {
+            padding: 8px 15px; border: 1px solid #ddd; color: #333; 
+            text-decoration: none; margin: 0 5px; border-radius: 4px; transition: 0.2s;
+        }
+        .pagination-box a:hover { background: #9f224e; color: #fff; border-color: #9f224e; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">VnExpress</a>
+        
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Mới nhất</a>
+                </li>
+                <li class="nav-item" th:each="cat : ${categories}">
+                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Thể thao</a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+    <li class="nav-item" sec:authorize="isAnonymous()">
+        <a class="nav-link text-primary fw-bold" th:href="@{/login}">Đăng nhập</a>
+    </li>
+    
+    <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị (Dashboard)</a>
+    </li>
+    <li class="nav-item" sec:authorize="isAuthenticated()">
+        <a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a>
+    </li>
+</ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 border-end pe-lg-4">
+            
+            <div th:if="${not #lists.isEmpty(articles)}" class="mb-5">
+                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="thumb-wrapper mb-3">
+                    <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}" class="img-lead" alt="Thumbnail">
+                </a>
+                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Tiêu đề bài viết tiêu điểm</a>
+                <p class="news-summary" th:text="${articles[0].summary}">Tóm tắt nội dung...</p>
+                <div class="text-muted small mt-2">
+                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold"></span> - 
+                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}"></span>
+                </div>
+            </div>
+
+            <hr class="mb-4">
+
+            <div th:each="article, iter : ${articles}" th:if="${iter.index > 0}" class="row mb-4 pb-4 border-bottom">
+                <div class="col-md-4 col-5">
+                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="thumb-wrapper">
+                        <img th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}" class="img-sub" alt="Thumbnail">
+                    </a>
+                </div>
+                <div class="col-md-8 col-7">
+                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Tiêu đề bài viết</a>
+                    <p class="news-summary d-none d-md-block" th:text="${article.summary}">Tóm tắt nội dung...</p>
+                    <div class="text-muted small mt-2">
+                        <span th:text="${article.category.name}" class="text-danger fw-bold"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${totalPages > 1}" class="pagination-box text-center mt-5 mb-5">
+                <a th:if="${currentPage > 0}" th:href="${currentCategorySlug != null} ? @{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})} : @{/(page=${currentPage - 1})}">&laquo; Trang trước</a>
+                <span class="mx-3 fw-bold text-muted" th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}"></span>
+                <a th:if="${currentPage < totalPages - 1}" th:href="${currentCategorySlug != null} ? @{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})} : @{/(page=${currentPage + 1})}">Trang sau &raquo;</a>
+            </div>
+
+        </div>
+
+        <div class="col-lg-4 ps-lg-4 mt-4 mt-lg-0">
+            <h5 class="sidebar-heading">Xem nhiều</h5>
+            
+            <div class="mt-3">
+                <div th:each="article, iter : ${articles}" th:if="${iter.index < 6}" class="sidebar-item d-flex align-items-start">
+                    <span class="rank-number" th:text="${iter.index + 1}">1</span>
+                    <div>
+                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Tiêu đề bài xem nhiều</a>
+                        <div class="text-muted small mt-1"><i class="bi bi-eye"></i> <span th:text="${article.views}"></span> lượt xem</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-5 text-center bg-light p-4 border rounded">
+                <span class="text-muted small d-block mb-2">- Quảng cáo -</span>
+                <img src="https://via.placeholder.com/300x250?text=Ad+Banner" class="img-fluid rounded" alt="Ads">
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

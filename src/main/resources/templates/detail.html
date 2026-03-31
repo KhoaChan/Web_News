@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${article.title} + ' - VnExpress Clone'">Chi tiết bài viết</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #fff; font-family: 'Roboto', sans-serif; color: #222; }
+        
+        /* Navbar (Đồng bộ với Trang chủ) */
+        .navbar { border-bottom: 1px solid #e5e5e5; padding: 0; }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
+        .nav-link { font-weight: 500; text-transform: uppercase; font-size: 0.85rem; padding: 15px 20px !important; color: #333 !important; }
+        .nav-link:hover { color: #9f224e !important; }
+
+        /* Typography Bài viết */
+        .article-container { max-width: 800px; margin: 0 auto; padding-top: 30px; }
+        .article-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; line-height: 1.3; color: #222; margin-bottom: 15px; }
+        .article-summary { font-size: 1.15rem; font-weight: 700; line-height: 1.6; color: #444; margin-bottom: 20px; }
+        .article-meta { font-size: 0.9rem; color: #777; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
+        
+        /* Nội dung chính */
+        .article-content { font-size: 1.15rem; line-height: 1.8; color: #333; }
+        .article-content p { margin-bottom: 15px; }
+        .article-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 20px 0; display: block; }
+        
+        /* Comments */
+        .comment-section-title { font-weight: 700; font-size: 1.2rem; color: #9f224e; border-bottom: 2px solid #9f224e; padding-bottom: 10px; display: inline-block; margin-bottom: 20px; }
+        .comment-box { background: #fcfcfc; padding: 25px; border-radius: 8px; border: 1px solid #eee; }
+        .user-avatar { font-size: 2.5rem; color: #ccc; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">VnExpress</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Mới nhất</a></li>
+                <li class="nav-item" th:each="cat : ${categories}">
+                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Thể thao</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link text-primary fw-bold" th:href="@{/login}"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị (Dashboard)</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mb-5 article-container">
+    
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item active fw-bold text-danger" aria-current="page">
+                <a th:href="@{/category/{slug}(slug=${article.category.slug})}" class="text-decoration-none text-danger" th:text="${article.category.name}">Chuyên mục</a>
+            </li>
+        </ol>
+    </nav>
+
+    <h1 class="article-title" th:text="${article.title}">Tiêu đề bài báo</h1>
+    <p class="article-summary" th:text="${article.summary}">Tóm tắt nội dung bài viết thường được in đậm và đặt trên cùng để thu hút độc giả...</p>
+    
+    <div class="article-meta d-flex justify-content-between align-items-center">
+        <div>
+            <span class="fw-bold text-dark me-3" th:if="${article.author != null}"><i class="fas fa-pen-nib"></i> <span th:text="${article.author.username}">Tác giả</span></span>
+            <span th:text="${#temporals.format(article.createdAt, 'EEEE, dd/MM/yyyy, HH:mm')}">Thời gian</span>
+        </div>
+        <div>
+            <i class="fas fa-eye"></i> <strong th:text="${article.views}">0</strong> lượt xem
+        </div>
+    </div>
+    
+    <div class="article-content" th:utext="${article.content}"></div>
+
+    <div class="mt-5 pt-4">
+        <h4 class="comment-section-title">Ý kiến bạn đọc (<span th:text="${#lists.size(article.comments)}">0</span>)</h4>
+        
+        <div class="comment-box mt-2 mb-5">
+            <h5 class="mb-3 fw-bold fs-6">Chia sẻ ý kiến của bạn</h5>
+            <form th:action="@{/article/comment}" method="post">
+                <input type="hidden" name="articleId" th:value="${article.id}">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <input type="text" name="name" class="form-control bg-white" placeholder="Họ tên của bạn" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <textarea name="content" class="form-control bg-white" rows="3" placeholder="Viết bình luận..." required></textarea>
+                </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Gửi bình luận</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="mt-4">
+            <div th:if="${#lists.isEmpty(article.comments)}" class="text-center text-muted py-4">
+                Chưa có bình luận nào. Hãy là người đầu tiên nêu ý kiến!
+            </div>
+
+            <div th:each="cmt : ${article.comments}" class="mb-4 d-flex">
+                <div class="me-3 mt-1">
+                    <i class="fas fa-user-circle user-avatar"></i>
+                </div>
+                <div class="w-100 border-bottom pb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <strong class="text-dark fs-6" th:text="${cmt.commenterName}">Người dùng</strong>
+                        <small class="text-muted" th:text="${#temporals.format(cmt.createdAt, 'HH:mm | dd/MM/yyyy')}"></small>
+                    </div>
+                    <p class="mb-0 text-secondary" style="font-size: 1.05rem;" th:text="${cmt.content}">Nội dung bình luận...</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản trị viên - Bảng điều khiển</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f4f6f9;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            min-height: 100vh;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #c2c7d0;
+            padding: 12px 20px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .sidebar .nav-link i {
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            padding: 30px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            color: #495057;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        
+        /* Custom Buttons */
+        .btn-action {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            line-height: 32px;
+            text-align: center;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        
+        <div class="col-md-2 sidebar d-none d-md-block">
+            <h4 class="text-center mb-4 fw-bold text-white">
+                <i class="fas fa-newspaper text-primary"></i> Admin Panel
+            </h4>
+            <ul class="nav flex-column px-2">
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/admin}">
+                        <i class="fas fa-tachometer-alt"></i> Quản lý Bài viết
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/admin/categories}">
+                        <i class="fas fa-folder-open"></i> Quản lý Chuyên mục
+                    </a>
+                </li>
+                <li class="nav-item mt-4">
+                    <a class="nav-link text-warning" th:href="@{/}">
+                        <i class="fas fa-external-link-alt"></i> Xem trang chủ web
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-10 main-content">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark m-0">Danh sách Bài viết</h2>
+                
+                <div>
+                    <span class="me-3 fw-bold text-secondary" sec:authorize="isAuthenticated()">
+                        Xin chào, <span sec:authentication="name">Admin</span>!
+                    </span>
+                    <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 font-weight-bold text-primary">Dữ liệu bài báo</h5>
+                    <a th:href="@{/admin/article/create}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Viết bài mới
+                    </a>
+                </div>
+                
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th width="5%">ID</th>
+                                    <th width="40%">Tiêu đề</th>
+                                    <th width="15%">Chuyên mục</th>
+                                    <th width="15%">Trạng thái</th>
+                                    <th width="20%" class="text-center">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="article : ${articles}">
+                                    <td class="fw-bold text-secondary" th:text="${article.id}">1</td>
+                                    
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img th:if="${article.thumbnailUrl != null}" th:src="${article.thumbnailUrl}" 
+                                                 class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <span class="fw-bold text-dark" th:text="${article.title}">Tiêu đề bài viết</span>
+                                        </div>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="badge bg-info text-dark" th:text="${article.category.name}">Chuyên mục</span>
+                                    </td>
+                                    
+                                    <td>
+                                        <span class="badge bg-success" th:if="${article.status == 'PUBLISHED'}">Đã xuất bản</span>
+                                        <span class="badge bg-secondary" th:if="${article.status == 'DRAFT'}">Bản nháp</span>
+                                    </td>
+                                    
+                                    <td class="text-center">
+                                        <a th:href="@{/admin/article/edit/{id}(id=${article.id})}" 
+                                           class="btn btn-outline-primary btn-action me-1" title="Sửa bài viết">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        
+                                        <a th:href="@{/admin/article/delete/{id}(id=${article.id})}" 
+                                           class="btn btn-outline-danger btn-action" title="Xóa bài viết"
+                                           onclick="return confirm('Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa?');">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer bg-white text-muted small text-center">
+                    Cập nhật dữ liệu mới nhất
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
