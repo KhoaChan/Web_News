@@ -121,5 +121,27 @@
         .create(document.querySelector('#editor-content'))
         .catch(error => console.error(error));
 </script>
+<script>
+    function generateSlug(text) {
+        return text.toString().toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/\u0111/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+    }
+
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+
+    if (titleInput && slugInput) {
+        titleInput.addEventListener('input', function() {
+            slugInput.value = generateSlug(this.value);
+        });
+    }
+</script>
 </body>
 </html>
+

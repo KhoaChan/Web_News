@@ -1,24 +1,23 @@
 package com.example.news.common.storage;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.news.common.exception.StorageException;
 
 @Service
 public class StorageService {
 
-    private final Path uploadRoot;
+    private final Cloudinary cloudinary;
 
-    public StorageService(@Value("${app.storage.upload-dir:src/main/resources/static/uploads}") String uploadDir) {
-        this.uploadRoot = Paths.get(uploadDir).normalize();
+    public StorageService(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
     }
 
     public String store(MultipartFile file) {
@@ -31,16 +30,23 @@ public class StorageService {
             throw new StorageException("Invalid file name");
         }
 
-        String filename = System.currentTimeMillis() + "_" + originalFilename.replace(' ', '_');
-        Path destination = uploadRoot.resolve(filename).normalize();
-
         try {
-            Files.createDirectories(uploadRoot);
-            Files.write(destination, file.getBytes());
+            @SuppressWarnings("rawtypes")
+            Map uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("public_id", buildPublicId(originalFilename)));
+            Object secureUrl = uploadResult.get("secure_url");
+            if (secureUrl == null) {
+                throw new StorageException("Cloudinary did not return a file URL");
+            }
+            return secureUrl.toString();
         } catch (IOException exception) {
-            throw new StorageException("Could not store file", exception);
+            throw new StorageException("Could not upload file to Cloudinary", exception);
         }
+    }
 
-        return "/uploads/" + filename;
+    private String buildPublicId(String originalFilename) {
+        String sanitizedName = originalFilename.replace(' ', '_');
+        return System.currentTimeMillis() + "_" + sanitizedName;
     }
 }
