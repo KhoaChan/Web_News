@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"></html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>VnExpress Clone - Tin tức mới nhất</title>
@@ -20,12 +19,12 @@
         .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
         .nav-link { 
             font-weight: 500; text-transform: uppercase; font-size: 0.85rem; 
-            padding: 15px 20px !important; color: #333 !important;
+            padding: 15px 12px !important; color: #333 !important;
             border-bottom: 3px solid transparent; transition: all 0.3s;
+            white-space: nowrap;
         }
         .nav-link:hover { color: #9f224e !important; border-bottom: 3px solid #9f224e; }
 
-        /* Tiêu đề bài viết */
         .news-title { 
             font-family: 'Playfair Display', serif; 
             font-weight: 700; color: #222; text-decoration: none; 
@@ -37,13 +36,11 @@
         .title-sub { font-size: 1.2rem; }
         .title-sidebar { font-size: 0.95rem; font-family: 'Roboto', sans-serif; }
 
-        /* Tóm tắt nội dung (Cắt bớt chữ nếu quá dài) */
         .news-summary {
             color: #444; font-size: 0.95rem; line-height: 1.5; margin-top: 10px;
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
         }
 
-        /* Hiệu ứng Ảnh (Zoom nhẹ khi hover) */
         .thumb-wrapper { overflow: hidden; border-radius: 4px; display: block; }
         .thumb-wrapper img {
             width: 100%; transition: transform 0.4s ease;
@@ -53,7 +50,6 @@
         .img-lead { height: 400px; object-fit: cover; }
         .img-sub { height: 120px; object-fit: cover; width: 100%; }
 
-        /* Cột Sidebar */
         .sidebar-heading {
             font-weight: 700; color: #9f224e; text-transform: uppercase;
             border-bottom: 2px solid #9f224e; padding-bottom: 8px; margin-bottom: 20px;
@@ -66,12 +62,15 @@
             line-height: 1; margin-right: 15px; font-family: 'Playfair Display', serif;
         }
 
-        /* Nút phân trang */
         .pagination-box a {
             padding: 8px 15px; border: 1px solid #ddd; color: #333; 
             text-decoration: none; margin: 0 5px; border-radius: 4px; transition: 0.2s;
         }
         .pagination-box a:hover { background: #9f224e; color: #fff; border-color: #9f224e; }
+
+        .search-item-hover:hover { background-color: #f8f9fa; }
+        #search-results::-webkit-scrollbar { width: 6px; }
+        #search-results::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
     </style>
 </head>
 <body>
@@ -80,28 +79,34 @@
     <div class="container">
         <a class="navbar-brand fw-bold" th:href="@{/}">VnExpress</a>
         
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Mới nhất</a>
-                </li>
+        <div class="collapse navbar-collapse d-flex justify-content-between align-items-center">
+            
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Mới nhất</a></li>
                 <li class="nav-item" th:each="cat : ${categories}">
                     <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Thể thao</a>
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto">
-    <li class="nav-item" sec:authorize="isAnonymous()">
-        <a class="nav-link text-primary fw-bold" th:href="@{/login}">Đăng nhập</a>
-    </li>
-    
-    <li class="nav-item" sec:authorize="isAuthenticated()">
-        <a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị (Dashboard)</a>
-    </li>
-    <li class="nav-item" sec:authorize="isAuthenticated()">
-        <a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a>
-    </li>
-</ul>
+            <form class="d-flex position-relative mx-2 flex-grow-1" style="max-width: 250px;" onsubmit="return false;">
+                <input class="form-control rounded-pill px-4" type="search" id="search-input" placeholder="Tìm kiếm..." aria-label="Search">
+                
+                <div id="search-results" class="position-absolute bg-white shadow rounded w-100 border" 
+                     style="top: 110%; left: 0; z-index: 1050; max-height: 350px; overflow-y: auto; display: none;">
+                </div>
+            </form>
+
+            <ul class="navbar-nav">
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link text-primary fw-bold" th:href="@{/login}"><i class="fas fa-user-circle"></i> Đăng nhập</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link text-danger fw-bold" th:href="@{/admin}"><i class="fas fa-cog"></i> Quản trị</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link text-muted" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Thoát</a>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -168,6 +173,51 @@
         </div>
     </div>
 </div>
+
+<script>
+    const searchInput = document.getElementById('search-input');
+    const resultBox = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', function() {
+        let query = this.value.trim();
+        
+        if (query.length < 2) { 
+            resultBox.innerHTML = ""; 
+            resultBox.style.display = 'none';
+            return; 
+        }
+
+        fetch('/api/search?q=' + encodeURIComponent(query))
+            .then(res => res.json())
+            .then(data => {
+                if(data.length > 0) {
+                    resultBox.style.display = 'block';
+                    resultBox.innerHTML = data.map(a => `
+                        <a href="/article/${a.slug}" class="d-flex align-items-center p-2 border-bottom text-decoration-none text-dark search-item-hover">
+                            <img src="${a.thumb || 'https://via.placeholder.com/50'}" style="width: 45px; height: 45px; object-fit: cover;" class="me-2 rounded">
+                            <span class="small fw-bold text-truncate" style="max-width: 220px;">${a.title}</span>
+                        </a>
+                    `).join('');
+                } else {
+                    resultBox.style.display = 'block';
+                    resultBox.innerHTML = '<div class="p-3 text-muted small text-center">Không tìm thấy bài viết nào</div>';
+                }
+            })
+            .catch(err => console.error("Lỗi tìm kiếm: ", err));
+    });
+
+    document.addEventListener('click', function(event) {
+        if (!searchInput.contains(event.target) && !resultBox.contains(event.target)) {
+            resultBox.style.display = 'none';
+        }
+    });
+
+    searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2 && resultBox.innerHTML !== "") {
+            resultBox.style.display = 'block';
+        }
+    });
+</script>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.example.news.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -21,5 +22,9 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     Page<Article> findByTitleContainingIgnoreCaseAndStatus(String title, String status, Pageable pageable);
 
     Page<Article> findByCategorySlugAndStatus(String slug, String status, Pageable pageable);
+
+    List<Article> findTop3ByCategoryIdAndIdNotOrderByCreatedAtDesc(Long categoryId, Long articleId);
+
+    List<Article> findTop5ByTitleContainingIgnoreCaseAndStatus(String title, String status);
     
 }
