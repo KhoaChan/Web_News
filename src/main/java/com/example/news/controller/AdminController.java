@@ -1,9 +1,6 @@
 package com.example.news.controller;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.Principal;
 
 import org.springframework.stereotype.Controller;
@@ -21,6 +18,7 @@ import com.example.news.entity.User;
 import com.example.news.repository.UserRepository;
 import com.example.news.service.ArticleService;
 import com.example.news.service.CategoryService;
+import com.example.news.service.FileUploadService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -32,8 +30,7 @@ public class AdminController {
     private final ArticleService articleService;
     private final CategoryService categoryService;
     private final UserRepository userRepository;
-
-    private static String UPLOAD_DIR = "src/main/resources/static/uploads/";
+    private final FileUploadService fileUploadService;
 
     @GetMapping
     public String dashboard(Model model) {
@@ -50,28 +47,39 @@ public class AdminController {
     }
 
     @PostMapping("/article/save")
-    public String saveArticle(@ModelAttribute("article") Article article, 
-                              @RequestParam("file") MultipartFile file,
-                              Principal principal) throws IOException {
-        
-        if (!file.isEmpty()) {
-            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR + fileName);
-            Files.createDirectories(path.getParent());
-            Files.write(path, file.getBytes());
-            article.setThumbnailUrl("/uploads/" + fileName);
-        }
+public String saveArticle(@ModelAttribute("article") Article formArticle, 
+                          @RequestParam("file") MultipartFile file, 
+                          Principal principal) throws IOException {
+    
+    Article articleToSave;
 
+    if (formArticle.getId() != null) {
+        articleToSave = articleService.findById(formArticle.getId());
+        
+        // Cập nhật các nội dung mới từ form
+        articleToSave.setTitle(formArticle.getTitle());
+        articleToSave.setSlug(formArticle.getSlug());
+        articleToSave.setSummary(formArticle.getSummary());
+        articleToSave.setContent(formArticle.getContent());
+        articleToSave.setCategory(formArticle.getCategory());
+    } else {
+        articleToSave = formArticle;
         String username = principal.getName();
         User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Lỗi: Không tìm thấy tài khoản tác giả!"));
-        article.setAuthor(author);
-        
-        if(article.getStatus() == null) article.setStatus("PUBLISHED");
-
-        articleService.save(article);
-        return "redirect:/admin"; 
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy user"));
+        articleToSave.setAuthor(author);
+        articleToSave.setStatus("PUBLISHED");
     }
+
+    if (!file.isEmpty()) {
+        String imageUrl = fileUploadService.uploadFile(file);
+        articleToSave.setThumbnailUrl(imageUrl);
+    }
+
+    articleService.save(articleToSave);
+    
+    return "redirect:/admin"; 
+}
 
     @GetMapping("/article/edit/{id}")
     public String editForm(@PathVariable("id") Long id, Model model) {
