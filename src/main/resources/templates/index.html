@@ -1,107 +1,63 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"></html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>VnExpress Clone - Tin tức mới nhất</title>
+    <title>News Website</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
     <style>
-        body { 
-            background-color: #fff; 
-            font-family: 'Roboto', sans-serif; 
-            color: #222;
-        }
-        
-        /* Navbar */
+        body { background-color: #fff; font-family: 'Roboto', sans-serif; color: #222; }
         .navbar { border-bottom: 1px solid #e5e5e5; padding: 0; }
         .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
-        .nav-link { 
-            font-weight: 500; text-transform: uppercase; font-size: 0.85rem; 
-            padding: 15px 20px !important; color: #333 !important;
-            border-bottom: 3px solid transparent; transition: all 0.3s;
-        }
+        .nav-link { font-weight: 500; text-transform: uppercase; font-size: 0.85rem; padding: 15px 20px !important; color: #333 !important; border-bottom: 3px solid transparent; transition: all 0.3s; }
         .nav-link:hover { color: #9f224e !important; border-bottom: 3px solid #9f224e; }
-
-        /* Tiêu đề bài viết */
-        .news-title { 
-            font-family: 'Playfair Display', serif; 
-            font-weight: 700; color: #222; text-decoration: none; 
-            line-height: 1.3; display: block; transition: color 0.2s;
-        }
+        .news-title { font-family: 'Playfair Display', serif; font-weight: 700; color: #222; text-decoration: none; line-height: 1.3; display: block; transition: color 0.2s; }
         .news-title:hover { color: #9f224e; }
-        
         .title-lead { font-size: 2rem; }
         .title-sub { font-size: 1.2rem; }
         .title-sidebar { font-size: 0.95rem; font-family: 'Roboto', sans-serif; }
-
-        /* Tóm tắt nội dung (Cắt bớt chữ nếu quá dài) */
-        .news-summary {
-            color: #444; font-size: 0.95rem; line-height: 1.5; margin-top: 10px;
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-        }
-
-        /* Hiệu ứng Ảnh (Zoom nhẹ khi hover) */
+        .news-summary { color: #444; font-size: 0.95rem; line-height: 1.5; margin-top: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .thumb-wrapper { overflow: hidden; border-radius: 4px; display: block; }
-        .thumb-wrapper img {
-            width: 100%; transition: transform 0.4s ease;
-        }
+        .thumb-wrapper img { width: 100%; transition: transform 0.4s ease; }
         .thumb-wrapper:hover img { transform: scale(1.05); }
-        
         .img-lead { height: 400px; object-fit: cover; }
         .img-sub { height: 120px; object-fit: cover; width: 100%; }
-
-        /* Cột Sidebar */
-        .sidebar-heading {
-            font-weight: 700; color: #9f224e; text-transform: uppercase;
-            border-bottom: 2px solid #9f224e; padding-bottom: 8px; margin-bottom: 20px;
-            display: inline-block;
-        }
+        .sidebar-heading { font-weight: 700; color: #9f224e; text-transform: uppercase; border-bottom: 2px solid #9f224e; padding-bottom: 8px; margin-bottom: 20px; display: inline-block; }
         .sidebar-item { border-bottom: 1px dashed #ddd; padding-bottom: 12px; margin-bottom: 12px; }
         .sidebar-item:last-child { border-bottom: none; }
-        .rank-number {
-            font-size: 2rem; font-weight: 900; color: #e5e5e5; 
-            line-height: 1; margin-right: 15px; font-family: 'Playfair Display', serif;
-        }
-
-        /* Nút phân trang */
-        .pagination-box a {
-            padding: 8px 15px; border: 1px solid #ddd; color: #333; 
-            text-decoration: none; margin: 0 5px; border-radius: 4px; transition: 0.2s;
-        }
+        .rank-number { font-size: 2rem; font-weight: 900; color: #e5e5e5; line-height: 1; margin-right: 15px; font-family: 'Playfair Display', serif; }
+        .pagination-box a { padding: 8px 15px; border: 1px solid #ddd; color: #333; text-decoration: none; margin: 0 5px; border-radius: 4px; transition: 0.2s; }
         .pagination-box a:hover { background: #9f224e; color: #fff; border-color: #9f224e; }
+        .auth-name { font-size: 0.82rem; color: #666; }
     </style>
 </head>
 <body>
-
 <nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
     <div class="container">
         <a class="navbar-brand fw-bold" th:href="@{/}">VnExpress</a>
-        
+
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/}">Mới nhất</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Latest</a></li>
                 <li class="nav-item" th:each="cat : ${categories}">
-                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Thể thao</a>
+                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Category</a>
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto">
-    <li class="nav-item" sec:authorize="isAnonymous()">
-        <a class="nav-link text-primary fw-bold" th:href="@{/login}">Đăng nhập</a>
-    </li>
-    
-    <li class="nav-item" sec:authorize="isAuthenticated()">
-        <a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị (Dashboard)</a>
-    </li>
-    <li class="nav-item" sec:authorize="isAuthenticated()">
-        <a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a>
-    </li>
-</ul>
+            <form class="d-flex me-3" th:action="@{/search}" method="get">
+                <input class="form-control form-control-sm" type="search" name="keyword" th:value="${keyword}" placeholder="Search title">
+            </form>
+
+            <ul class="navbar-nav ms-auto align-items-lg-center">
+                <li class="nav-item auth-name me-2" sec:authorize="isAuthenticated()">
+                    <span sec:authentication="principal.displayName">User</span>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}">Login</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Register</a></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Profile</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Admin</a></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Logout</a></li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -109,20 +65,25 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 border-end pe-lg-4">
-            
+            <div class="alert alert-info" th:if="${keyword != null}" th:text="'Search results for: ' + ${keyword}"></div>
+
             <div th:if="${not #lists.isEmpty(articles)}" class="mb-5">
                 <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="thumb-wrapper mb-3">
                     <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}" class="img-lead" alt="Thumbnail">
                 </a>
-                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Tiêu đề bài viết tiêu điểm</a>
-                <p class="news-summary" th:text="${articles[0].summary}">Tóm tắt nội dung...</p>
+                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Featured title</a>
+                <p class="news-summary" th:text="${articles[0].summary}">Summary</p>
                 <div class="text-muted small mt-2">
-                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold"></span> - 
-                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}"></span>
+                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold">Category</span> -
+                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}">Date</span>
                 </div>
             </div>
 
-            <hr class="mb-4">
+            <div th:if="${#lists.isEmpty(articles)}" class="text-center text-muted py-5">
+                No published articles found.
+            </div>
+
+            <hr class="mb-4" th:if="${not #lists.isEmpty(articles)}">
 
             <div th:each="article, iter : ${articles}" th:if="${iter.index > 0}" class="row mb-4 pb-4 border-bottom">
                 <div class="col-md-4 col-5">
@@ -131,43 +92,51 @@
                     </a>
                 </div>
                 <div class="col-md-8 col-7">
-                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Tiêu đề bài viết</a>
-                    <p class="news-summary d-none d-md-block" th:text="${article.summary}">Tóm tắt nội dung...</p>
+                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Article title</a>
+                    <p class="news-summary d-none d-md-block" th:text="${article.summary}">Summary</p>
                     <div class="text-muted small mt-2">
-                        <span th:text="${article.category.name}" class="text-danger fw-bold"></span>
+                        <span th:text="${article.category.name}" class="text-danger fw-bold">Category</span>
                     </div>
                 </div>
             </div>
 
             <div th:if="${totalPages > 1}" class="pagination-box text-center mt-5 mb-5">
-                <a th:if="${currentPage > 0}" th:href="${currentCategorySlug != null} ? @{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})} : @{/(page=${currentPage - 1})}">&laquo; Trang trước</a>
-                <span class="mx-3 fw-bold text-muted" th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}"></span>
-                <a th:if="${currentPage < totalPages - 1}" th:href="${currentCategorySlug != null} ? @{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})} : @{/(page=${currentPage + 1})}">Trang sau &raquo;</a>
-            </div>
+                <a th:if="${currentPage > 0 and currentCategorySlug != null}"
+                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})}">&laquo; Previous</a>
+                <a th:if="${currentPage > 0 and keyword != null}"
+                   th:href="@{/search(keyword=${keyword}, page=${currentPage - 1})}">&laquo; Previous</a>
+                <a th:if="${currentPage > 0 and currentCategorySlug == null and keyword == null}"
+                   th:href="@{/(page=${currentPage - 1})}">&laquo; Previous</a>
 
+                <span class="mx-3 fw-bold text-muted" th:text="'Page ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Page</span>
+
+                <a th:if="${currentPage < totalPages - 1 and currentCategorySlug != null}"
+                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})}">Next &raquo;</a>
+                <a th:if="${currentPage < totalPages - 1 and keyword != null}"
+                   th:href="@{/search(keyword=${keyword}, page=${currentPage + 1})}">Next &raquo;</a>
+                <a th:if="${currentPage < totalPages - 1 and currentCategorySlug == null and keyword == null}"
+                   th:href="@{/(page=${currentPage + 1})}">Next &raquo;</a>
+            </div>
         </div>
 
         <div class="col-lg-4 ps-lg-4 mt-4 mt-lg-0">
-            <h5 class="sidebar-heading">Xem nhiều</h5>
-            
+            <h5 class="sidebar-heading">Most viewed</h5>
             <div class="mt-3">
                 <div th:each="article, iter : ${articles}" th:if="${iter.index < 6}" class="sidebar-item d-flex align-items-start">
                     <span class="rank-number" th:text="${iter.index + 1}">1</span>
                     <div>
-                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Tiêu đề bài xem nhiều</a>
-                        <div class="text-muted small mt-1"><i class="bi bi-eye"></i> <span th:text="${article.views}"></span> lượt xem</div>
+                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Popular title</a>
+                        <div class="text-muted small mt-1"><span th:text="${article.views}">0</span> views</div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="mt-5 text-center bg-light p-4 border rounded">
-                <span class="text-muted small d-block mb-2">- Quảng cáo -</span>
+                <span class="text-muted small d-block mb-2">Advertisement</span>
                 <img src="https://via.placeholder.com/300x250?text=Ad+Banner" class="img-fluid rounded" alt="Ads">
             </div>
-
         </div>
     </div>
 </div>
-
 </body>
 </html>

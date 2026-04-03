@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #fff6ef 0%, #edf7f0 100%); font-family: 'Roboto', sans-serif; }
+        .auth-card { width: 100%; max-width: 520px; border: none; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12); }
+        .brand { font-family: 'Playfair Display', serif; color: #9f224e; }
+    </style>
+</head>
+<body>
+<div class="card auth-card">
+    <div class="card-body p-4 p-md-5">
+        <div class="text-center mb-4">
+            <div class="brand h2 mb-2">Create Account</div>
+            <p class="text-muted mb-0">Register a reader account for profile and future features.</p>
+        </div>
+
+        <form th:action="@{/register}" th:object="${registerForm}" method="post">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" th:field="*{username}" th:classappend="${#fields.hasErrors('username')} ? ' is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? ' is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Full name</label>
+                <input type="text" class="form-control" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? ' is-invalid' : ''">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" th:field="*{password}" th:classappend="${#fields.hasErrors('password')} ? ' is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <label class="form-label">Confirm password</label>
+                    <input type="password" class="form-control" th:field="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')} ? ' is-invalid' : ''">
+                    <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-danger w-100 py-2 fw-bold">Register</button>
+        </form>
+
+        <div class="d-flex justify-content-between mt-4 small">
+            <a th:href="@{/login}" class="text-decoration-none">Already have an account?</a>
+            <a th:href="@{/}" class="text-decoration-none text-muted">Back to home</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

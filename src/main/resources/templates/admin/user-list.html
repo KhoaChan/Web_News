@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
+    <title>User Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -22,9 +22,9 @@
         <div class="col-md-2 sidebar d-none d-md-block">
             <h4 class="text-center mb-4 fw-bold text-white"><i class="fas fa-newspaper text-primary"></i> Admin Panel</h4>
             <ul class="nav flex-column px-2">
-                <li class="nav-item"><a class="nav-link active" th:href="@{/admin}"><i class="fas fa-tachometer-alt"></i> Articles</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin}"><i class="fas fa-tachometer-alt"></i> Articles</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/admin/categories}"><i class="fas fa-folder-open"></i> Categories</a></li>
-                <li class="nav-item"><a class="nav-link" th:href="@{/admin/users}"><i class="fas fa-users"></i> Users</a></li>
+                <li class="nav-item"><a class="nav-link active" th:href="@{/admin/users}"><i class="fas fa-users"></i> Users</a></li>
                 <li class="nav-item mt-4"><a class="nav-link text-warning" th:href="@{/}"><i class="fas fa-external-link-alt"></i> View Site</a></li>
             </ul>
         </div>
@@ -32,8 +32,8 @@
         <div class="col-md-10 main-content">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="fw-bold m-0">Articles</h2>
-                    <p class="text-muted mb-0">Manage draft and published content from one place.</p>
+                    <h2 class="fw-bold m-0">Users</h2>
+                    <p class="text-muted mb-0">Manage reader accounts and admin access safely.</p>
                 </div>
                 <div>
                     <span class="me-3 fw-bold text-secondary" sec:authorize="isAuthenticated()">
@@ -47,50 +47,46 @@
 
             <div class="card">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                    <h5 class="m-0 text-primary">Article List</h5>
-                    <a th:href="@{/admin/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New Article</a>
+                    <h5 class="m-0 text-primary">User List</h5>
+                    <a th:href="@{/admin/user/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> New User</a>
                 </div>
-
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
                             <thead>
                             <tr>
                                 <th class="ps-3">ID</th>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Category</th>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
                                 <th>Status</th>
-                                <th>Views</th>
                                 <th class="text-center">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="article : ${articles}">
-                                <td class="ps-3 fw-bold text-secondary" th:text="${article.id}">1</td>
+                            <tr th:each="user : ${users}">
+                                <td class="ps-3 fw-bold text-secondary" th:text="${user.id}">1</td>
                                 <td>
-                                    <div class="d-flex align-items-center">
-                                        <img th:if="${article.thumbnailUrl != null}" th:src="${article.thumbnailUrl}" class="rounded me-2" style="width: 40px; height: 40px; object-fit: cover;" alt="Thumbnail">
-                                        <div>
-                                            <div class="fw-bold text-dark" th:text="${article.title}">Article title</div>
-                                            <small class="text-muted" th:text="${article.slug}">slug</small>
-                                        </div>
-                                    </div>
+                                    <div class="fw-bold text-dark" th:text="${user.fullName != null and !#strings.isEmpty(user.fullName) ? user.fullName : user.username}">Display name</div>
+                                    <small class="text-muted" th:text="${user.username}">username</small>
                                 </td>
-                                <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Author</td>
-                                <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
+                                <td th:text="${user.email}">email</td>
+                                <td><span class="badge bg-info text-dark" th:text="${user.role.name()}">USER</span></td>
                                 <td>
-                                    <span class="badge bg-success" th:if="${article.status.name() == 'PUBLISHED'}">PUBLISHED</span>
-                                    <span class="badge bg-secondary" th:if="${article.status.name() == 'DRAFT'}">DRAFT</span>
+                                    <span class="badge bg-success" th:if="${user.enabled}">Enabled</span>
+                                    <span class="badge bg-secondary" th:if="${!user.enabled}">Disabled</span>
                                 </td>
-                                <td th:text="${article.views}">0</td>
                                 <td class="text-center">
-                                    <a th:href="@{/admin/article/edit/{id}(id=${article.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
-                                    <a th:href="@{/admin/article/delete/{id}(id=${article.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this article?');"><i class="fas fa-trash-alt"></i></a>
+                                    <a th:href="@{/admin/user/edit/{id}(id=${user.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
+                                    <form th:action="@{/admin/user/toggle-status/{id}(id=${user.id})}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-warning btn-sm" th:title="${user.enabled ? 'Disable user' : 'Enable user'}">
+                                            <i class="fas" th:classappend="${user.enabled} ? ' fa-user-slash' : ' fa-user-check'"></i>
+                                        </button>
+                                    </form>
                                 </td>
                             </tr>
-                            <tr th:if="${#lists.isEmpty(articles)}">
-                                <td colspan="7" class="text-center py-4 text-muted">No articles found.</td>
+                            <tr th:if="${#lists.isEmpty(users)}">
+                                <td colspan="6" class="text-center py-4 text-muted">No users found.</td>
                             </tr>
                             </tbody>
                         </table>
