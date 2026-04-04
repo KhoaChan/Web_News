@@ -31,6 +31,11 @@ public class AdminArticleController {
     @GetMapping("/admin")
     public String dashboard(Model model) {
         model.addAttribute("articles", articleManagementService.findAllForAdmin());
+        populateLayoutModel(
+                model,
+                "Articles",
+                "Manage content, editorial status, and publishing from one workspace.",
+                "admin_articles");
         return "admin/dashboard";
     }
 
@@ -82,5 +87,16 @@ public class AdminArticleController {
         model.addAttribute("articleForm", articleForm);
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("articleStatuses", ArticleStatus.values());
+        populateLayoutModel(
+                model,
+                articleForm.getId() == null ? "Create Article" : "Edit Article",
+                "Manage content, editorial status, and review notes from one form.",
+                "admin_articles");
+    }
+
+    private void populateLayoutModel(Model model, String pageTitle, String pageSubtitle, String activeKey) {
+        model.addAttribute("pageTitle", pageTitle);
+        model.addAttribute("pageSubtitle", pageSubtitle);
+        model.addAttribute("activeKey", activeKey);
     }
 }

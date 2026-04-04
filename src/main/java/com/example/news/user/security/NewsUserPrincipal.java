@@ -38,6 +38,27 @@ public class NewsUserPrincipal implements UserDetails {
         return role == Role.ADMIN;
     }
 
+    public boolean isEditor() {
+        return role == Role.EDITOR;
+    }
+
+    public boolean isAuthor() {
+        return role == Role.AUTHOR;
+    }
+
+    public String getDashboardPath() {
+        if (role == Role.ADMIN) {
+            return "/admin";
+        }
+        if (role == Role.EDITOR) {
+            return "/editor";
+        }
+        if (role == Role.AUTHOR) {
+            return "/author";
+        }
+        return "/";
+    }
+
     public String getDisplayName() {
         if (fullName != null && !fullName.isBlank()) {
             return fullName;

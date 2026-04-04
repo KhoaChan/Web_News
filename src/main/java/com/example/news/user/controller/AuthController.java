@@ -30,7 +30,7 @@ public class AuthController {
             @RequestParam(required = false) String registered,
             Model model) {
         if (principal != null) {
-            return principal.isAdmin() ? "redirect:/admin" : "redirect:/";
+            return "redirect:" + principal.getDashboardPath();
         }
 
         model.addAttribute("loginError", error != null);
@@ -44,7 +44,7 @@ public class AuthController {
             @AuthenticationPrincipal NewsUserPrincipal principal,
             @ModelAttribute("registerForm") RegisterForm registerForm) {
         if (principal != null) {
-            return principal.isAdmin() ? "redirect:/admin" : "redirect:/";
+            return "redirect:" + principal.getDashboardPath();
         }
         return "auth/register";
     }
@@ -55,7 +55,7 @@ public class AuthController {
             @Valid @ModelAttribute("registerForm") RegisterForm registerForm,
             BindingResult bindingResult) {
         if (principal != null) {
-            return principal.isAdmin() ? "redirect:/admin" : "redirect:/";
+            return "redirect:" + principal.getDashboardPath();
         }
 
         authService.validateRegistrationForm(registerForm, bindingResult);

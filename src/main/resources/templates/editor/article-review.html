@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
+<body class="backoffice-body">
+<div th:replace="~{fragments/backoffice :: shell(${activeKey}, ${pageTitle}, ${pageSubtitle}, ~{::content})}">
+    <th:block th:fragment="content">
+        <style>
+            .article-body img { max-width: 100%; height: auto; }
+        </style>
+        <div class="card backoffice-card">
+            <div class="card-body p-4 p-lg-5">
+                <div class="row g-4">
+                    <div class="col-xl-8">
+                        <h2 class="h3" th:text="${article.title}">Article title</h2>
+                        <p class="text-muted mb-3">
+                            <span th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Author</span>
+                            • <span th:text="${article.category.name}">Category</span>
+                            • <span th:text="${article.status.name()}">IN_REVIEW</span>
+                        </p>
+                        <p class="lead" th:text="${article.summary}">Summary</p>
+                        <div class="article-body" th:utext="${article.content}"></div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="border rounded p-3 bg-light" th:if="${article.thumbnailUrl != null}">
+                            <div class="small text-muted mb-2">Thumbnail</div>
+                            <img th:src="${article.thumbnailUrl}" alt="Thumbnail" class="img-fluid rounded">
+                        </div>
+                        <div class="border rounded p-3 mt-3 bg-white">
+                            <div class="small text-muted mb-2">Workflow Actions</div>
+                            <form th:action="@{/editor/article/publish/{id}(id=${article.id})}" method="post" class="mb-3">
+                                <button type="submit" class="btn btn-success w-100">Publish</button>
+                            </form>
+                            <form th:action="@{/editor/article/request-changes/{id}(id=${article.id})}" method="post" class="mb-3">
+                                <label class="form-label">Request changes note</label>
+                                <textarea name="reviewNote" rows="4" class="form-control mb-2" placeholder="Explain what needs to be changed"></textarea>
+                                <button type="submit" class="btn btn-warning w-100">Request Changes</button>
+                            </form>
+                            <form th:action="@{/editor/article/cancel/{id}(id=${article.id})}" method="post">
+                                <label class="form-label">Cancellation note</label>
+                                <textarea name="reviewNote" rows="3" class="form-control mb-2" placeholder="Explain why the submission is cancelled"></textarea>
+                                <button type="submit" class="btn btn-outline-danger w-100">Cancel Submission</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</div>
+</body>
+</html>

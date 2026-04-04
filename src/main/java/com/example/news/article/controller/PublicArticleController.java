@@ -72,12 +72,14 @@ public class PublicArticleController {
         }
 
         commentService.createComment(commentForm);
-        redirectAttributes.addFlashAttribute("successMessage", "Comment submitted successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Comment submitted and is awaiting moderation.");
         return "redirect:/article/" + article.getSlug();
     }
 
     private void populateDetailModel(Model model, Article article) {
         model.addAttribute("article", article);
         model.addAttribute("categories", categoryService.findAll());
+        model.addAttribute("approvedComments", commentService.findApprovedCommentsForArticle(article.getId()));
+        model.addAttribute("approvedCommentCount", commentService.countApprovedCommentsForArticle(article.getId()));
     }
 }

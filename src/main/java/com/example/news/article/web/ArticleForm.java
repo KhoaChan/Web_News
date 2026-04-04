@@ -32,8 +32,11 @@ public class ArticleForm {
     private Long categoryId;
 
     @NotBlank(message = "Status is required")
-    @Pattern(regexp = "^(DRAFT|PUBLISHED)$", message = "Status must be DRAFT or PUBLISHED")
-    private String status = "PUBLISHED";
+    @Pattern(regexp = "^(DRAFT|IN_REVIEW|CHANGES_REQUESTED|PUBLISHED|CANCELLED)$", message = "Status is invalid")
+    private String status = "DRAFT";
+
+    @Size(max = 1000, message = "Review note must be at most 1000 characters")
+    private String reviewNote;
 
     private String thumbnailUrl;
 }

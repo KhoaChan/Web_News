@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>News Website</title>
+    <title>News</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -34,7 +34,7 @@
 <body>
 <nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
     <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">VnExpress</a>
+        <a class="navbar-brand fw-bold" th:href="@{/}">News</a>
 
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mx-auto">
@@ -55,6 +55,8 @@
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}">Login</a></li>
                 <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Register</a></li>
                 <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Profile</a></li>
+                <li class="nav-item" sec:authorize="hasRole('AUTHOR')"><a class="nav-link text-danger fw-bold" th:href="@{/author}">Author</a></li>
+                <li class="nav-item" sec:authorize="hasRole('EDITOR')"><a class="nav-link text-danger fw-bold" th:href="@{/editor}">Editor</a></li>
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Admin</a></li>
                 <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Logout</a></li>
             </ul>

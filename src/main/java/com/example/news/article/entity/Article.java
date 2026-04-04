@@ -55,8 +55,14 @@ public class Article {
     private String thumbnailUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private ArticleStatus status = ArticleStatus.PUBLISHED;
+    @Column(nullable = false, length = 30)
+    private ArticleStatus status = ArticleStatus.DRAFT;
+
+    @Column(name = "review_note", length = 1000)
+    private String reviewNote;
+
+    @Column(name = "published_at")
+    private LocalDateTime publishedAt;
 
     @Column(nullable = false)
     private int views = 0;

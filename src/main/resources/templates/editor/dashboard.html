@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
+<body class="backoffice-body">
+<div th:replace="~{fragments/backoffice :: shell(${activeKey}, ${pageTitle}, ${pageSubtitle}, ~{::content})}">
+    <th:block th:fragment="content">
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4">
+                <div class="card backoffice-card h-100">
+                    <div class="card-body">
+                        <div class="text-muted small text-uppercase fw-bold mb-2">Moderation</div>
+                        <div class="display-6 fw-bold mb-2" th:text="${pendingCommentCount}">0</div>
+                        <p class="text-muted mb-3">Comments are waiting for editorial approval before they appear publicly.</p>
+                        <a th:href="@{/editor/comments}" class="btn btn-outline-primary btn-sm"><i class="fas fa-comments me-1"></i>Open Comment Queue</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card backoffice-card mb-4">
+            <div class="card-header py-3">
+                <h2 class="h5 mb-0">Review Queue</h2>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead>
+                        <tr>
+                            <th class="ps-3">Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="article : ${reviewQueue}">
+                            <td class="ps-3">
+                                <div class="fw-bold" th:text="${article.title}">Article</div>
+                                <small class="text-muted" th:text="${article.slug}">slug</small>
+                            </td>
+                            <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Author</td>
+                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
+                            <td><span class="badge bg-primary" th:text="${article.status.name()}">IN_REVIEW</span></td>
+                            <td class="text-center">
+                                <a th:href="@{/editor/article/review/{id}(id=${article.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-search"></i></a>
+                                <form th:action="@{/editor/article/publish/{id}(id=${article.id})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-success btn-sm"><i class="fas fa-check"></i></button>
+                                </form>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(reviewQueue)}">
+                            <td colspan="5" class="text-center py-4 text-muted">No articles are waiting for review.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card backoffice-card h-100">
+                    <div class="card-header py-3"><h2 class="h5 mb-0">Published</h2></div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="article : ${publishedArticles}">
+                                <div class="fw-bold" th:text="${article.title}">Title</div>
+                                <small class="text-muted" th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">author</small>
+                            </li>
+                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(publishedArticles)}">No published articles yet.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card backoffice-card h-100">
+                    <div class="card-header py-3"><h2 class="h5 mb-0">Cancelled</h2></div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:each="article : ${cancelledArticles}">
+                                <div class="fw-bold" th:text="${article.title}">Title</div>
+                                <small class="text-muted" th:text="${article.reviewNote != null ? article.reviewNote : 'No cancellation note'}">note</small>
+                            </li>
+                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(cancelledArticles)}">No cancelled articles.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</div>
+</body>
+</html>

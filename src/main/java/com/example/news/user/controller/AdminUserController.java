@@ -27,6 +27,11 @@ public class AdminUserController {
     @GetMapping("/admin/users")
     public String listUsers(Model model) {
         model.addAttribute("users", userManagementService.findAllUsers());
+        populateLayoutModel(
+                model,
+                "Users",
+                "Manage reader, author, editor, and admin access safely.",
+                "admin_users");
         return "admin/user-list";
     }
 
@@ -80,5 +85,16 @@ public class AdminUserController {
     private void populateFormModel(Model model, AdminUserForm userForm) {
         model.addAttribute("userForm", userForm);
         model.addAttribute("roles", Role.values());
+        populateLayoutModel(
+                model,
+                userForm.getId() == null ? "Create User" : "Edit User",
+                "Create and manage user accounts across all newsroom roles.",
+                "admin_users");
+    }
+
+    private void populateLayoutModel(Model model, String pageTitle, String pageSubtitle, String activeKey) {
+        model.addAttribute("pageTitle", pageTitle);
+        model.addAttribute("pageSubtitle", pageSubtitle);
+        model.addAttribute("activeKey", activeKey);
     }
 }

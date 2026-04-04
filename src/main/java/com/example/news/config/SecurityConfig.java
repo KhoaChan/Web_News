@@ -46,6 +46,8 @@ public class SecurityConfig {
                         "/error/**")
                 .permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
+                .requestMatchers("/editor/**").hasAnyRole("EDITOR", "ADMIN")
+                .requestMatchers("/author/**").hasAnyRole("AUTHOR", "ADMIN")
                 .requestMatchers("/profile", "/profile/**").authenticated()
                 .anyRequest().authenticated()
             )
@@ -66,8 +68,23 @@ public class SecurityConfig {
     }
 
     private void handleSuccessRedirect(jakarta.servlet.http.HttpServletResponse response, Authentication authentication) throws IOException {
-        boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
-        response.sendRedirect(isAdmin ? "/admin" : "/");
+        if (hasRole(authentication, "ROLE_ADMIN")) {
+            response.sendRedirect("/admin");
+            return;
+        }
+        if (hasRole(authentication, "ROLE_EDITOR")) {
+            response.sendRedirect("/editor");
+            return;
+        }
+        if (hasRole(authentication, "ROLE_AUTHOR")) {
+            response.sendRedirect("/author");
+            return;
+        }
+        response.sendRedirect("/");
+    }
+
+    private boolean hasRole(Authentication authentication, String role) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals(role));
     }
 }

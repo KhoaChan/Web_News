@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
+<body class="backoffice-body">
+<div th:replace="~{fragments/backoffice :: shell(${activeKey}, ${pageTitle}, ${pageSubtitle}, ~{::content})}">
+    <th:block th:fragment="content">
+        <th:block th:replace="~{user/fragments/profile-content :: content}"></th:block>
+    </th:block>
+</div>
+</body>
+</html>

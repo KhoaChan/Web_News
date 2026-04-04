@@ -26,7 +26,7 @@ public class AdminUserForm {
     private String fullName;
 
     @NotBlank(message = "Role is required")
-    @Pattern(regexp = "^(ADMIN|USER)$", message = "Role must be ADMIN or USER")
+    @Pattern(regexp = "^(ADMIN|EDITOR|AUTHOR|USER)$", message = "Role is invalid")
     private String role = "USER";
 
     private boolean enabled = true;

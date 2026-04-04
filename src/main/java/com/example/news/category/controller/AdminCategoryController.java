@@ -24,18 +24,23 @@ public class AdminCategoryController {
     @GetMapping("/admin/categories")
     public String listCategories(Model model) {
         model.addAttribute("categories", categoryService.findAll());
+        populateLayoutModel(
+                model,
+                "Categories",
+                "Manage category names, slugs, and safe deletion rules.",
+                "admin_categories");
         return "admin/category-list";
     }
 
     @GetMapping("/admin/category/create")
     public String createCategoryForm(Model model) {
-        model.addAttribute("categoryForm", categoryService.buildForm());
+        populateFormModel(model, categoryService.buildForm());
         return "admin/category-form";
     }
 
     @GetMapping("/admin/category/edit/{id}")
     public String editCategoryForm(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("categoryForm", categoryService.getCategoryForm(id));
+        populateFormModel(model, categoryService.getCategoryForm(id));
         return "admin/category-form";
     }
 
@@ -47,7 +52,7 @@ public class AdminCategoryController {
             RedirectAttributes redirectAttributes) {
         categoryService.validateCategoryForm(categoryForm, bindingResult);
         if (bindingResult.hasErrors()) {
-            model.addAttribute("categoryForm", categoryForm);
+            populateFormModel(model, categoryForm);
             return "admin/category-form";
         }
 
@@ -67,5 +72,20 @@ public class AdminCategoryController {
         categoryService.deleteCategory(id);
         redirectAttributes.addFlashAttribute("successMessage", "Category deleted successfully.");
         return "redirect:/admin/categories";
+    }
+
+    private void populateFormModel(Model model, CategoryForm categoryForm) {
+        model.addAttribute("categoryForm", categoryForm);
+        populateLayoutModel(
+                model,
+                categoryForm.getId() == null ? "Create Category" : "Edit Category",
+                "Keep category data unique and easy to manage.",
+                "admin_categories");
+    }
+
+    private void populateLayoutModel(Model model, String pageTitle, String pageSubtitle, String activeKey) {
+        model.addAttribute("pageTitle", pageTitle);
+        model.addAttribute("pageSubtitle", pageSubtitle);
+        model.addAttribute("activeKey", activeKey);
     }
 }

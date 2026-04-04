@@ -35,8 +35,8 @@ public class ProfileController {
         if (changePasswordForm.getCurrentPassword() == null) {
             model.addAttribute("changePasswordForm", userProfileService.buildChangePasswordForm());
         }
-        model.addAttribute("currentUser", userProfileService.getUser(principal.getId()));
-        return "user/profile";
+        populateCommonModel(principal, model);
+        return resolveProfileView(principal);
     }
 
     @PostMapping("/profile")
@@ -49,8 +49,8 @@ public class ProfileController {
         userProfileService.validateProfileForm(principal.getId(), profileForm, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("changePasswordForm", userProfileService.buildChangePasswordForm());
-            model.addAttribute("currentUser", userProfileService.getUser(principal.getId()));
-            return "user/profile";
+            populateCommonModel(principal, model);
+            return resolveProfileView(principal);
         }
 
         userProfileService.updateProfile(principal.getId(), profileForm);
@@ -68,12 +68,32 @@ public class ProfileController {
         userProfileService.validateChangePasswordForm(principal.getId(), changePasswordForm, bindingResult);
         if (bindingResult.hasErrors()) {
             model.addAttribute("profileForm", userProfileService.getProfileForm(principal.getId()));
-            model.addAttribute("currentUser", userProfileService.getUser(principal.getId()));
-            return "user/profile";
+            populateCommonModel(principal, model);
+            return resolveProfileView(principal);
         }
 
         userProfileService.changePassword(principal.getId(), changePasswordForm);
         redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully.");
         return "redirect:/profile";
+    }
+
+    private void populateCommonModel(NewsUserPrincipal principal, Model model) {
+        model.addAttribute("currentUser", userProfileService.getUser(principal.getId()));
+        if (usesBackofficeProfile(principal)) {
+            model.addAttribute("pageTitle", "My Profile");
+            model.addAttribute("pageSubtitle", "Manage your account information and password from the shared workspace.");
+            model.addAttribute("activeKey", "profile");
+        }
+    }
+
+    private String resolveProfileView(NewsUserPrincipal principal) {
+        if (usesBackofficeProfile(principal)) {
+            return "user/profile-backoffice";
+        }
+        return "user/profile";
+    }
+
+    private boolean usesBackofficeProfile(NewsUserPrincipal principal) {
+        return principal.isAdmin() || principal.isEditor() || principal.isAuthor();
     }
 }

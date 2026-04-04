@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title != null ? title + ' | News Backoffice' : 'News Backoffice'}">News Backoffice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --backoffice-sidebar-width: 292px;
+            --backoffice-sidebar-collapsed-width: 92px;
+            --backoffice-surface: rgba(255, 255, 255, 0.92);
+            --backoffice-border: rgba(226, 232, 240, 0.95);
+            --backoffice-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+        }
+        body.backoffice-body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(180deg, #eef3f9 0%, #f8fafc 100%);
+            color: #1f2937;
+        }
+        .backoffice-shell {
+            min-height: 100vh;
+        }
+        .backoffice-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+        .backoffice-sidebar {
+            width: var(--backoffice-sidebar-width);
+            flex: 0 0 var(--backoffice-sidebar-width);
+            min-height: 100vh;
+            background: linear-gradient(180deg, #162132 0%, #24364e 100%);
+            color: #fff;
+            padding: 22px 18px;
+            position: sticky;
+            top: 0;
+            transition: width 0.25s ease, flex-basis 0.25s ease, padding 0.25s ease;
+            overflow-x: hidden;
+        }
+        .backoffice-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            padding: 0 6px;
+        }
+        .backoffice-brand-icon {
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #2563eb, #0ea5e9);
+            box-shadow: 0 14px 24px rgba(37, 99, 235, 0.28);
+            flex-shrink: 0;
+        }
+        .backoffice-brand-copy {
+            min-width: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .backoffice-brand-copy strong {
+            display: block;
+            font-size: 1.05rem;
+            line-height: 1.1;
+        }
+        .backoffice-brand-copy small {
+            display: block;
+            color: rgba(255, 255, 255, 0.68);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+        .backoffice-nav-section {
+            margin-top: 22px;
+            margin-bottom: 10px;
+            padding: 0 8px;
+            color: rgba(255, 255, 255, 0.56);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.72rem;
+            font-weight: 800;
+            transition: opacity 0.2s ease;
+        }
+        .backoffice-nav-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .backoffice-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 11px 12px;
+            border-radius: 15px;
+            margin-bottom: 6px;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            white-space: nowrap;
+        }
+        .backoffice-nav-link:hover,
+        .backoffice-nav-link.active {
+            background: rgba(37, 99, 235, 0.2);
+            color: #fff;
+            transform: translateX(2px);
+        }
+        .backoffice-nav-link i {
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .backoffice-nav-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: opacity 0.2s ease, width 0.2s ease;
+        }
+        .backoffice-main {
+            min-height: 100vh;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            min-width: 0;
+        }
+        .backoffice-header {
+            position: sticky;
+            top: 16px;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid var(--backoffice-border);
+            box-shadow: 0 20px 36px rgba(15, 23, 42, 0.08);
+            border-radius: 24px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            backdrop-filter: blur(10px);
+        }
+        .backoffice-header p {
+            margin-bottom: 0;
+        }
+        .backoffice-header-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .backoffice-header-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .backoffice-header-subtitle {
+            color: #64748b;
+            max-width: 720px;
+        }
+        .backoffice-header-actions {
+            justify-content: flex-end;
+        }
+        .backoffice-action-group {
+            background: #f8fafc;
+            border: 1px solid var(--backoffice-border);
+            border-radius: 16px;
+            padding: 10px 12px;
+        }
+        .backoffice-user {
+            color: #475569;
+            font-weight: 800;
+        }
+        .backoffice-content {
+            flex: 1;
+        }
+        .backoffice-card {
+            border: none;
+            border-radius: 22px;
+            box-shadow: var(--backoffice-shadow);
+            overflow: hidden;
+        }
+        .backoffice-card .card-header {
+            background: var(--backoffice-surface);
+            border-bottom: 1px solid #eef2f7;
+        }
+        .backoffice-footer {
+            margin-top: 24px;
+            padding: 18px 4px 0;
+            border-top: 1px solid var(--backoffice-border);
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+        .backoffice-footer strong {
+            color: #0f172a;
+        }
+        .table td {
+            vertical-align: middle;
+        }
+        .mobile-menu-button,
+        .desktop-sidebar-button {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .desktop-sidebar-button i,
+        .mobile-menu-button i {
+            pointer-events: none;
+        }
+        .offcanvas.backoffice-mobile-nav {
+            background: linear-gradient(180deg, #162132 0%, #24364e 100%);
+            color: #fff;
+        }
+        .offcanvas.backoffice-mobile-nav .btn-close {
+            filter: invert(1);
+        }
+        body.backoffice-collapsed .backoffice-sidebar {
+            width: var(--backoffice-sidebar-collapsed-width);
+            flex-basis: var(--backoffice-sidebar-collapsed-width);
+            padding-left: 12px;
+            padding-right: 12px;
+        }
+        body.backoffice-collapsed .backoffice-brand {
+            justify-content: center;
+            padding: 0;
+        }
+        body.backoffice-collapsed .backoffice-brand-copy,
+        body.backoffice-collapsed .backoffice-nav-section,
+        body.backoffice-collapsed .backoffice-nav-label {
+            opacity: 0;
+            width: 0;
+            pointer-events: none;
+        }
+        body.backoffice-collapsed .backoffice-nav-link {
+            justify-content: center;
+            padding-left: 10px;
+            padding-right: 10px;
+            gap: 0;
+        }
+        body.backoffice-collapsed .backoffice-nav-link:hover,
+        body.backoffice-collapsed .backoffice-nav-link.active {
+            transform: none;
+        }
+        body.backoffice-collapsed .backoffice-brand-copy {
+            transform: translateX(-8px);
+        }
+        @media (max-width: 991.98px) {
+            .backoffice-main {
+                padding: 18px;
+            }
+            .backoffice-header {
+                top: 12px;
+                padding: 16px;
+                border-radius: 18px;
+            }
+            .backoffice-header-title {
+                font-size: 1.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<th:block th:fragment="navSections(activeKey)">
+    <th:block sec:authorize="hasRole('ADMIN')">
+        <div class="backoffice-nav-section">Administration</div>
+        <ul class="backoffice-nav-list">
+            <li><a class="backoffice-nav-link" title="Articles" th:classappend="${activeKey == 'admin_articles'} ? ' active'" th:href="@{/admin}"><i class="fas fa-newspaper"></i><span class="backoffice-nav-label">Articles</span></a></li>
+            <li><a class="backoffice-nav-link" title="Categories" th:classappend="${activeKey == 'admin_categories'} ? ' active'" th:href="@{/admin/categories}"><i class="fas fa-folder-open"></i><span class="backoffice-nav-label">Categories</span></a></li>
+            <li><a class="backoffice-nav-link" title="Users" th:classappend="${activeKey == 'admin_users'} ? ' active'" th:href="@{/admin/users}"><i class="fas fa-users"></i><span class="backoffice-nav-label">Users</span></a></li>
+        </ul>
+    </th:block>
+
+    <th:block sec:authorize="hasAnyRole('ADMIN', 'EDITOR')">
+        <div class="backoffice-nav-section">Editorial</div>
+        <ul class="backoffice-nav-list">
+            <li><a class="backoffice-nav-link" title="Review Queue" th:classappend="${activeKey == 'editor_queue'} ? ' active'" th:href="@{/editor}"><i class="fas fa-clipboard-check"></i><span class="backoffice-nav-label">Review Queue</span></a></li>
+            <li><a class="backoffice-nav-link" title="Pending Comments" th:classappend="${activeKey == 'editor_comments'} ? ' active'" th:href="@{/editor/comments}"><i class="fas fa-comments"></i><span class="backoffice-nav-label">Pending Comments</span></a></li>
+        </ul>
+    </th:block>
+
+    <th:block sec:authorize="hasAnyRole('ADMIN', 'AUTHOR')">
+        <div class="backoffice-nav-section">Authoring</div>
+        <ul class="backoffice-nav-list">
+            <li><a class="backoffice-nav-link" title="My Articles" th:classappend="${activeKey == 'author_articles'} ? ' active'" th:href="@{/author}"><i class="fas fa-pen-nib"></i><span class="backoffice-nav-label">My Articles</span></a></li>
+            <li><a class="backoffice-nav-link" title="New Draft" th:classappend="${activeKey == 'author_create'} ? ' active'" th:href="@{/author/article/create}"><i class="fas fa-file-circle-plus"></i><span class="backoffice-nav-label">New Draft</span></a></li>
+        </ul>
+    </th:block>
+
+    <div class="backoffice-nav-section">General</div>
+    <ul class="backoffice-nav-list">
+        <li><a class="backoffice-nav-link" title="Profile" th:classappend="${activeKey == 'profile'} ? ' active'" th:href="@{/profile}"><i class="fas fa-id-badge"></i><span class="backoffice-nav-label">Profile</span></a></li>
+        <li><a class="backoffice-nav-link" title="View Site" th:href="@{/}"><i class="fas fa-up-right-from-square"></i><span class="backoffice-nav-label">View Site</span></a></li>
+        <li><a class="backoffice-nav-link" title="Logout" th:href="@{/logout}"><i class="fas fa-right-from-bracket"></i><span class="backoffice-nav-label">Logout</span></a></li>
+    </ul>
+</th:block>
+
+<div th:fragment="header(pageTitle, pageSubtitle)" class="backoffice-header">
+    <div class="d-flex flex-column flex-xl-row justify-content-between gap-3 align-items-xl-center">
+        <div class="d-flex align-items-start gap-3">
+            <div class="d-flex align-items-center gap-2">
+                <button id="backofficeSidebarToggle"
+                        class="btn btn-outline-secondary desktop-sidebar-button d-none d-lg-inline-flex"
+                        type="button"
+                        aria-label="Collapse sidebar"
+                        title="Collapse sidebar">
+                    <i class="fas fa-bars-staggered"></i>
+                </button>
+                <button class="btn btn-outline-secondary d-lg-none mobile-menu-button"
+                        type="button"
+                        data-bs-toggle="offcanvas"
+                        data-bs-target="#backofficeMobileMenu"
+                        aria-controls="backofficeMobileMenu"
+                        aria-label="Open navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div>
+                <div class="backoffice-header-eyebrow">
+                    <i class="fas fa-layer-group"></i>
+                    <span>News Backoffice</span>
+                </div>
+                <h1 class="backoffice-header-title" th:text="${pageTitle}">Backoffice</h1>
+                <p class="backoffice-header-subtitle" th:text="${pageSubtitle}">Manage your newsroom workspace.</p>
+            </div>
+        </div>
+        <div class="d-flex align-items-center flex-wrap gap-2 backoffice-header-actions">
+            <div class="backoffice-action-group d-flex align-items-center flex-wrap gap-2">
+                <span class="backoffice-user" sec:authorize="isAuthenticated()">
+                    Signed in as <span sec:authentication="principal.displayName">User</span>
+                </span>
+                <a th:href="@{/profile}" class="btn btn-light border btn-sm"><i class="fas fa-id-badge me-1"></i>Profile</a>
+                <a th:href="@{/}" class="btn btn-light border btn-sm"><i class="fas fa-up-right-from-square me-1"></i>View Site</a>
+                <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm"><i class="fas fa-sign-out-alt me-1"></i>Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="flashMessages(successMessage, errorMessage)">
+    <div class="alert alert-success border-0 shadow-sm" th:if="${successMessage}" th:text="${successMessage}"></div>
+    <div class="alert alert-danger border-0 shadow-sm" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+</div>
+
+<div th:fragment="footer()" class="backoffice-footer d-flex flex-column flex-md-row justify-content-between gap-2 align-items-md-center">
+    <div>
+        <strong>News Backoffice</strong>
+        <span class="ms-2">Editorial and publishing workspace.</span>
+    </div>
+    <a th:href="@{/}" class="text-decoration-none">Return to News</a>
+</div>
+
+<div th:fragment="shell(activeKey, pageTitle, pageSubtitle, content)" class="container-fluid p-0 backoffice-shell">
+    <div class="backoffice-layout">
+        <aside class="backoffice-sidebar d-none d-lg-flex flex-column" id="backofficeSidebar">
+            <div class="backoffice-brand">
+                <span class="backoffice-brand-icon"><i class="fas fa-newspaper text-white"></i></span>
+                <div class="backoffice-brand-copy">
+                    <strong>News</strong>
+                    <small>Backoffice</small>
+                </div>
+            </div>
+            <th:block th:replace="~{fragments/backoffice :: navSections(${activeKey})}"></th:block>
+        </aside>
+
+        <main class="backoffice-main">
+            <th:block th:replace="~{fragments/backoffice :: header(${pageTitle}, ${pageSubtitle})}"></th:block>
+            <th:block th:replace="~{fragments/backoffice :: flashMessages(${successMessage}, ${errorMessage})}"></th:block>
+            <div class="backoffice-content">
+                <th:block th:replace="${content}"></th:block>
+            </div>
+            <th:block th:replace="~{fragments/backoffice :: footer()}"></th:block>
+        </main>
+    </div>
+
+    <div class="offcanvas offcanvas-start backoffice-mobile-nav" tabindex="-1" id="backofficeMobileMenu" aria-labelledby="backofficeMobileMenuLabel">
+        <div class="offcanvas-header">
+            <div>
+                <h5 class="offcanvas-title" id="backofficeMobileMenuLabel">News Backoffice</h5>
+                <div class="small text-white-50">Navigation</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <th:block th:replace="~{fragments/backoffice :: navSections(${activeKey})}"></th:block>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function () {
+            var storageKey = 'news:backoffice:sidebar';
+            var body = document.body;
+            var toggle = document.getElementById('backofficeSidebarToggle');
+
+            if (!body || !toggle) {
+                return;
+            }
+
+            var syncState = function (collapsed) {
+                body.classList.toggle('backoffice-collapsed', collapsed);
+                toggle.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+                toggle.setAttribute('aria-label', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+                toggle.setAttribute('title', collapsed ? 'Expand sidebar' : 'Collapse sidebar');
+            };
+
+            syncState(localStorage.getItem(storageKey) === 'collapsed');
+
+            toggle.addEventListener('click', function () {
+                var nextCollapsed = !body.classList.contains('backoffice-collapsed');
+                syncState(nextCollapsed);
+                localStorage.setItem(storageKey, nextCollapsed ? 'collapsed' : 'expanded');
+            });
+        })();
+    </script>
+</div>
+</body>
+</html>

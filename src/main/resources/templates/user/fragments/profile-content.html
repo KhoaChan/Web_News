@@ -1,0 +1,82 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="content">
+    <style>
+        .profile-card {
+            border: none;
+            border-radius: 18px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+        }
+    </style>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card profile-card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px;">
+                            <i class="fas fa-user fa-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="h5 mb-1" th:text="${currentUser.fullName != null and !#strings.isEmpty(currentUser.fullName) ? currentUser.fullName : currentUser.username}">Display name</h2>
+                            <div class="text-muted" th:text="${currentUser.role.name()}">USER</div>
+                        </div>
+                    </div>
+                    <dl class="row mb-0 small">
+                        <dt class="col-4 text-muted">Username</dt>
+                        <dd class="col-8" th:text="${currentUser.username}">username</dd>
+                        <dt class="col-4 text-muted">Email</dt>
+                        <dd class="col-8" th:text="${currentUser.email}">email</dd>
+                        <dt class="col-4 text-muted">Status</dt>
+                        <dd class="col-8" th:text="${currentUser.enabled ? 'Enabled' : 'Disabled'}">Enabled</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="card profile-card mb-4">
+                <div class="card-body p-4">
+                    <h3 class="h5 mb-3">Profile Information</h3>
+                    <form th:action="@{/profile}" th:object="${profileForm}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Full name</label>
+                            <input type="text" class="form-control" th:field="*{fullName}" th:classappend="${#fields.hasErrors('fullName')} ? ' is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" th:field="*{email}" th:classappend="${#fields.hasErrors('email')} ? ' is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Save profile</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card profile-card">
+                <div class="card-body p-4">
+                    <h3 class="h5 mb-3">Change Password</h3>
+                    <form th:action="@{/profile/password}" th:object="${changePasswordForm}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Current password</label>
+                            <input type="password" class="form-control" th:field="*{currentPassword}" th:classappend="${#fields.hasErrors('currentPassword')} ? ' is-invalid' : ''">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">New password</label>
+                                <input type="password" class="form-control" th:field="*{newPassword}" th:classappend="${#fields.hasErrors('newPassword')} ? ' is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Confirm new password</label>
+                                <input type="password" class="form-control" th:field="*{confirmPassword}" th:classappend="${#fields.hasErrors('confirmPassword')} ? ' is-invalid' : ''">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary">Change password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

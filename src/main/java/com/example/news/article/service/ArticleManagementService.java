@@ -1,10 +1,12 @@
 package com.example.news.article.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,7 +36,9 @@ public class ArticleManagementService {
     }
 
     public ArticleForm buildForm() {
-        return new ArticleForm();
+        ArticleForm form = new ArticleForm();
+        form.setStatus(ArticleStatus.DRAFT.name());
+        return form;
     }
 
     public ArticleForm getArticleForm(Long id) {
@@ -47,8 +51,13 @@ public class ArticleManagementService {
         form.setContent(article.getContent());
         form.setCategoryId(article.getCategory().getId());
         form.setStatus(article.getStatus().name());
+        form.setReviewNote(article.getReviewNote());
         form.setThumbnailUrl(article.getThumbnailUrl());
         return form;
+    }
+
+    public Article getArticleById(Long id) {
+        return getArticle(id);
     }
 
     public void validateArticleForm(ArticleForm form, BindingResult bindingResult) {
@@ -108,11 +117,30 @@ public class ArticleManagementService {
         article.setSummary(form.getSummary().trim());
         article.setContent(form.getContent().trim());
         article.setCategory(categoryService.getById(form.getCategoryId()));
-        article.setStatus(ArticleStatus.valueOf(form.getStatus()));
+
+        ArticleStatus status = ArticleStatus.valueOf(form.getStatus());
+        article.setStatus(status);
+        article.setReviewNote(normalize(form.getReviewNote()));
+
+        if (status == ArticleStatus.PUBLISHED) {
+            if (article.getPublishedAt() == null) {
+                article.setPublishedAt(LocalDateTime.now());
+            }
+            article.setReviewNote(null);
+        } else {
+            article.setPublishedAt(null);
+        }
 
         String thumbnailUrl = storageService.store(file);
         if (thumbnailUrl != null) {
             article.setThumbnailUrl(thumbnailUrl);
         }
+    }
+
+    private String normalize(String value) {
+        if (!StringUtils.hasText(value)) {
+            return null;
+        }
+        return value.trim();
     }
 }

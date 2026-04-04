@@ -82,8 +82,8 @@ public class UserManagementService {
             bindingResult.rejectValue("enabled", "selfDisable", "You cannot disable your own account");
         }
 
-        if (form.getId() != null && form.getId().equals(currentAdminId) && Role.USER.name().equals(form.getRole())) {
-            bindingResult.rejectValue("role", "selfDemote", "You cannot change your own role to USER");
+        if (form.getId() != null && form.getId().equals(currentAdminId) && !Role.ADMIN.name().equals(form.getRole())) {
+            bindingResult.rejectValue("role", "selfDemote", "You cannot change your own role away from ADMIN");
         }
     }
 
@@ -96,8 +96,8 @@ public class UserManagementService {
     public User updateUser(Long currentAdminId, AdminUserForm form) {
         User user = getUser(form.getId());
 
-        if (user.getId().equals(currentAdminId) && Role.USER.name().equals(form.getRole())) {
-            throw new InvalidOperationException("You cannot change your own role to USER");
+        if (user.getId().equals(currentAdminId) && !Role.ADMIN.name().equals(form.getRole())) {
+            throw new InvalidOperationException("You cannot change your own role away from ADMIN");
         }
 
         if (user.getId().equals(currentAdminId) && !form.isEnabled()) {

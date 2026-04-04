@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
+<body class="backoffice-body">
+<div th:replace="~{fragments/backoffice :: shell(${activeKey}, ${pageTitle}, ${pageSubtitle}, ~{::content})}">
+    <th:block th:fragment="content">
+        <div class="card backoffice-card">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">My Articles</h5>
+                    <div class="small text-muted">Visible statuses: draft, review, requested changes, published, cancelled.</div>
+                </div>
+                <a th:href="@{/author/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Draft</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 align-middle">
+                        <thead>
+                        <tr>
+                            <th class="ps-3">Title</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Review Note</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="article : ${articles}">
+                            <td class="ps-3">
+                                <div class="fw-bold" th:text="${article.title}">Article title</div>
+                                <small class="text-muted" th:text="${article.slug}">slug</small>
+                            </td>
+                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${article.status.name() == 'PUBLISHED' ? ' bg-success' : article.status.name() == 'IN_REVIEW' ? ' bg-primary' : article.status.name() == 'CHANGES_REQUESTED' ? ' bg-warning text-dark' : article.status.name() == 'CANCELLED' ? ' bg-danger' : ' bg-secondary'}"
+                                      th:text="${article.status.name()}">STATUS</span>
+                            </td>
+                            <td>
+                                <span th:if="${article.reviewNote != null and !#strings.isEmpty(article.reviewNote)}" th:text="${article.reviewNote}">Review note</span>
+                                <span th:if="${article.reviewNote == null or #strings.isEmpty(article.reviewNote)}" class="text-muted">No editorial note</span>
+                            </td>
+                            <td class="text-center">
+                                <a th:if="${article.status.name() == 'DRAFT' or article.status.name() == 'CHANGES_REQUESTED'}"
+                                   th:href="@{/author/article/edit/{id}(id=${article.id})}"
+                                   class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
+                                <form th:if="${article.status.name() == 'DRAFT' or article.status.name() == 'CHANGES_REQUESTED'}"
+                                      th:action="@{/author/article/submit/{id}(id=${article.id})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-success btn-sm me-1"><i class="fas fa-paper-plane"></i></button>
+                                </form>
+                                <form th:if="${article.status.name() == 'DRAFT' or article.status.name() == 'CHANGES_REQUESTED'}"
+                                      th:action="@{/author/article/cancel/{id}(id=${article.id})}" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-ban"></i></button>
+                                </form>
+                                <span th:if="${article.status.name() != 'DRAFT' and article.status.name() != 'CHANGES_REQUESTED'}" class="text-muted small">Locked</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(articles)}">
+                            <td colspan="5" class="text-center py-4 text-muted">You do not have any articles yet.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</div>
+</body>
+</html>
