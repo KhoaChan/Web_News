@@ -63,7 +63,13 @@
 
                     <div class="mb-4">
                         <label class="form-label">Nội dung</label>
-                        <textarea id="editor-content" th:field="*{content}" th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
+                        <div class="form-text mb-2">Bạn có thể kéo thả hoặc dán ảnh trực tiếp vào trình soạn thảo. Video ở giai đoạn này nên dùng liên kết nhúng từ nguồn ngoài.</div>
+                        <textarea
+                            id="editor-content"
+                            data-rich-editor="article"
+                            th:attr="data-upload-url=@{/backoffice/media/image}"
+                            th:field="*{content}"
+                            th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
                         <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
                     </div>
 
@@ -77,11 +83,7 @@
     </th:block>
 </div>
 <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
-<script>
-    ClassicEditor
-        .create(document.querySelector('#editor-content'))
-        .catch(error => console.error(error));
-</script>
+<script th:src="@{/js/ckeditor-media.js}"></script>
 <script>
     function generateSlug(text) {
         return text.toString().toLowerCase()
