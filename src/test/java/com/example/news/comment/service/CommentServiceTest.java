@@ -70,6 +70,6 @@ class CommentServiceTest {
 
         assertThatThrownBy(() -> commentService.createComment(form))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("not available for comments");
+                .hasMessageContaining("không nhận bình luận");
     }
 }

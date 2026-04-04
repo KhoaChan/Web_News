@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
   <head>
     <meta charset="UTF-8" />
-    <title>Login</title>
+    <title>Đăng nhập</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -39,52 +39,52 @@
         <div class="text-center mb-4">
           <div class="brand h2 mb-2">News</div>
           <p class="text-muted mb-0">
-            Sign in to continue to the admin and profile area.
+            Đăng nhập để tiếp tục vào khu vực quản lý và hồ sơ.
           </p>
         </div>
 
         <div class="alert alert-danger" th:if="${loginError}">
-          Invalid username or password.
+          Tên đăng nhập hoặc mật khẩu không đúng.
         </div>
         <div class="alert alert-success" th:if="${logoutSuccess}">
-          You have been logged out successfully.
+          Bạn đã đăng xuất thành công.
         </div>
         <div class="alert alert-success" th:if="${registeredSuccess}">
-          Registration successful. Please sign in.
+          Đăng ký thành công. Vui lòng đăng nhập.
         </div>
 
         <form th:action="@{/login}" method="post">
           <div class="mb-3">
-            <label class="form-label">Username</label>
+            <label class="form-label">Tên đăng nhập</label>
             <input
               type="text"
               name="username"
               class="form-control"
-              placeholder="Enter username"
+              placeholder="Nhập tên đăng nhập"
               required
             />
           </div>
           <div class="mb-4">
-            <label class="form-label">Password</label>
+            <label class="form-label">Mật khẩu</label>
             <input
               type="password"
               name="password"
               class="form-control"
-              placeholder="Enter password"
+              placeholder="Nhập mật khẩu"
               required
             />
           </div>
           <button type="submit" class="btn btn-danger w-100 py-2 fw-bold">
-            Login
+            Đăng nhập
           </button>
         </form>
 
         <div class="d-flex justify-content-between mt-4 small">
           <a th:href="@{/register}" class="text-decoration-none"
-            >Create an account</a
+            >Tạo tài khoản</a
           >
           <a th:href="@{/}" class="text-decoration-none text-muted"
-            >Back to home</a
+            >Quay về trang chủ</a
           >
         </div>
       </div>

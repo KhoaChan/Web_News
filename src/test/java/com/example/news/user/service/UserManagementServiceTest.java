@@ -83,6 +83,6 @@ class UserManagementServiceTest {
 
         assertThatThrownBy(() -> userManagementService.toggleEnabled(7L, 7L))
                 .isInstanceOf(InvalidOperationException.class)
-                .hasMessageContaining("cannot disable your own account");
+                .hasMessageContaining("không thể tự khóa");
     }
 }

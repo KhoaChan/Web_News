@@ -7,10 +7,10 @@
         <div class="card backoffice-card">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="m-0 text-primary">Category List</h5>
-                    <div class="small text-muted">Categories stay available to admins only, while editorial roles focus on publishing work.</div>
+                    <h5 class="m-0 text-primary">Danh sách chuyên mục</h5>
+                    <div class="small text-muted">Chuyên mục do quản trị viên quản lý, còn các vai trò biên tập tập trung vào luồng xuất bản.</div>
                 </div>
-                <a th:href="@{/admin/category/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Category</a>
+                <a th:href="@{/admin/category/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tạo chuyên mục</a>
             </div>
 
             <div class="card-body p-0">
@@ -19,25 +19,25 @@
                         <thead>
                         <tr>
                             <th class="ps-3">ID</th>
-                            <th>Name</th>
-                            <th>Slug</th>
-                            <th>Description</th>
-                            <th class="text-center">Actions</th>
+                            <th>Tên</th>
+                            <th>Đường dẫn</th>
+                            <th>Mô tả</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="cat : ${categories}">
                             <td class="ps-3 fw-bold text-secondary" th:text="${cat.id}">1</td>
-                            <td class="fw-bold text-dark" th:text="${cat.name}">Category</td>
+                            <td class="fw-bold text-dark" th:text="${cat.name}">Chuyên mục</td>
                             <td><span class="badge bg-light text-dark border" th:text="${cat.slug}">slug</span></td>
-                            <td th:text="${cat.description}">Description</td>
+                            <td th:text="${cat.description}">Mô tả</td>
                             <td class="text-center">
                                 <a th:href="@{/admin/category/edit/{id}(id=${cat.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
-                                <a th:href="@{/admin/category/delete/{id}(id=${cat.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this category?');"><i class="fas fa-trash-alt"></i></a>
+                                <a th:href="@{/admin/category/delete/{id}(id=${cat.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa chuyên mục này?');"><i class="fas fa-trash-alt"></i></a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(categories)}">
-                            <td colspan="5" class="text-center py-4 text-muted">No categories found.</td>
+                            <td colspan="5" class="text-center py-4 text-muted">Chưa có chuyên mục nào.</td>
                         </tr>
                         </tbody>
                     </table>

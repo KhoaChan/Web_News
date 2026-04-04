@@ -51,6 +51,6 @@ class CommentModerationServiceTest {
 
         assertThatThrownBy(() -> commentModerationService.rejectComment(2L))
                 .isInstanceOf(InvalidOperationException.class)
-                .hasMessageContaining("pending moderation");
+                .hasMessageContaining("chờ duyệt");
     }
 }

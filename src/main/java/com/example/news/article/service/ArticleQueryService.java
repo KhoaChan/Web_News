@@ -40,16 +40,16 @@ public class ArticleQueryService {
     @Transactional
     public Article getPublishedArticleDetail(String slug) {
         Article article = articleRepository.findBySlugAndStatus(slug, ArticleStatus.PUBLISHED)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found with slug: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với đường dẫn: " + slug));
         article.setViews(article.getViews() + 1);
         return article;
     }
 
     public Article getPublishedArticleById(Long id) {
         Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với ID: " + id));
         if (article.getStatus() != ArticleStatus.PUBLISHED) {
-            throw new ResourceNotFoundException("Article is not available for the public site");
+            throw new ResourceNotFoundException("Bài viết hiện chưa sẵn sàng để hiển thị công khai");
         }
         return article;
     }

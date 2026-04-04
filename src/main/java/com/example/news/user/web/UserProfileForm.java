@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 public class UserProfileForm {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email is invalid")
+    @NotBlank(message = "Vui lòng nhập email")
+    @Email(message = "Email không hợp lệ")
     private String email;
 
-    @Size(max = 150, message = "Full name must be at most 150 characters")
+    @Size(max = 150, message = "Họ và tên tối đa 150 ký tự")
     private String fullName;
 }

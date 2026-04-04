@@ -31,27 +31,27 @@ public class DataSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        Category theThao = ensureCategory("The thao", "the-thao", "Tin tuc the thao");
-        Category congNghe = ensureCategory("Cong nghe", "cong-nghe", "Cong nghe moi nhat");
-        ensureCategory("Giai tri", "giai-tri", "Showbiz va phim anh");
+        Category theThao = ensureCategory("Thể thao", "the-thao", "Tin tức thể thao");
+        Category congNghe = ensureCategory("Công nghệ", "cong-nghe", "Tin tức công nghệ mới nhất");
+        ensureCategory("Giải trí", "giai-tri", "Tin tức showbiz và phim ảnh");
 
-        User admin = ensureUser("admin", "admin@news.com", "System Administrator", Role.ADMIN);
-        User author = ensureUser("author", "author@news.com", "Demo Author", Role.AUTHOR);
-        ensureUser("editor", "editor@news.com", "Demo Editor", Role.EDITOR);
+        User admin = ensureUser("admin", "admin@news.com", "Quản trị hệ thống", Role.ADMIN);
+        User author = ensureUser("author", "author@news.com", "Tác giả demo", Role.AUTHOR);
+        ensureUser("editor", "editor@news.com", "Biên tập viên demo", Role.EDITOR);
 
         ensureArticle(
                 "doi-tuyen-viet-nam-chuan-bi-cho-giai-dau-lon",
-                "Doi tuyen Viet Nam chuan bi cho giai dau lon",
-                "Cac cau thu dang tap luyen hang say cho giai dau lon sap toi.",
-                "<p>Noi dung chi tiet cua bai bao the thao mau.</p>",
+                "Đội tuyển Việt Nam chuẩn bị cho giải đấu lớn",
+                "Các cầu thủ đang tập luyện hăng say cho giải đấu lớn sắp tới.",
+                "<p>Nội dung chi tiết của bài báo thể thao mẫu.</p>",
                 theThao,
                 admin);
 
         ensureArticle(
                 "ra-mat-dong-laptop-gaming-the-he-moi",
-                "Ra mat dong laptop gaming the he moi",
-                "So huu cau hinh manh va he thong tan nhiet cai tien.",
-                "<p>Noi dung chi tiet cua bai bao cong nghe mau.</p>",
+                "Ra mắt dòng laptop gaming thế hệ mới",
+                "Sở hữu cấu hình mạnh và hệ thống tản nhiệt cải tiến.",
+                "<p>Nội dung chi tiết của bài báo công nghệ mẫu.</p>",
                 congNghe,
                 author);
     }

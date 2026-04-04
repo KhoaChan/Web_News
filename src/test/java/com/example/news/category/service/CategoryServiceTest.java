@@ -40,7 +40,7 @@ class CategoryServiceTest {
 
         assertThatThrownBy(() -> categoryService.deleteCategory(10L))
                 .isInstanceOf(InvalidOperationException.class)
-                .hasMessageContaining("still has articles");
+                .hasMessageContaining("vẫn còn bài viết");
 
         verify(categoryRepository, never()).delete(category);
     }

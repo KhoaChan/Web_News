@@ -29,15 +29,15 @@ public class AuthService {
 
         if (StringUtils.hasText(form.getPassword()) && StringUtils.hasText(form.getConfirmPassword())
                 && !form.getPassword().equals(form.getConfirmPassword())) {
-            bindingResult.rejectValue("confirmPassword", "mismatch", "Password confirmation does not match");
+            bindingResult.rejectValue("confirmPassword", "mismatch", "Xác nhận mật khẩu không khớp");
         }
 
         if (StringUtils.hasText(username) && userRepository.existsByUsername(username)) {
-            bindingResult.rejectValue("username", "duplicate", "Username already exists");
+            bindingResult.rejectValue("username", "duplicate", "Tên đăng nhập đã tồn tại");
         }
 
         if (StringUtils.hasText(email) && userRepository.existsByEmail(email)) {
-            bindingResult.rejectValue("email", "duplicate", "Email already exists");
+            bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
         }
     }
 

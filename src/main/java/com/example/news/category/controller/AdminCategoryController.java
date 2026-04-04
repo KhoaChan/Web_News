@@ -26,8 +26,8 @@ public class AdminCategoryController {
         model.addAttribute("categories", categoryService.findAll());
         populateLayoutModel(
                 model,
-                "Categories",
-                "Manage category names, slugs, and safe deletion rules.",
+                "Chuyên mục",
+                "Quản lý tên chuyên mục, slug và các quy tắc xóa an toàn.",
                 "admin_categories");
         return "admin/category-list";
     }
@@ -58,10 +58,10 @@ public class AdminCategoryController {
 
         if (categoryForm.getId() == null) {
             categoryService.createCategory(categoryForm);
-            redirectAttributes.addFlashAttribute("successMessage", "Category created successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Tạo chuyên mục thành công.");
         } else {
             categoryService.updateCategory(categoryForm.getId(), categoryForm);
-            redirectAttributes.addFlashAttribute("successMessage", "Category updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật chuyên mục thành công.");
         }
 
         return "redirect:/admin/categories";
@@ -70,7 +70,7 @@ public class AdminCategoryController {
     @GetMapping("/admin/category/delete/{id}")
     public String deleteCategory(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         categoryService.deleteCategory(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Category deleted successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Xóa chuyên mục thành công.");
         return "redirect:/admin/categories";
     }
 
@@ -78,8 +78,8 @@ public class AdminCategoryController {
         model.addAttribute("categoryForm", categoryForm);
         populateLayoutModel(
                 model,
-                categoryForm.getId() == null ? "Create Category" : "Edit Category",
-                "Keep category data unique and easy to manage.",
+                categoryForm.getId() == null ? "Tạo chuyên mục" : "Chỉnh sửa chuyên mục",
+                "Giữ dữ liệu chuyên mục duy nhất và dễ quản lý.",
                 "admin_categories");
     }
 

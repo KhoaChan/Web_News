@@ -72,7 +72,7 @@ public class PublicArticleController {
         }
 
         commentService.createComment(commentForm);
-        redirectAttributes.addFlashAttribute("successMessage", "Comment submitted and is awaiting moderation.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã gửi bình luận và đang chờ duyệt.");
         return "redirect:/article/" + article.getSlug();
     }
 

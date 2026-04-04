@@ -30,8 +30,8 @@ public class EditorWorkflowController {
         model.addAttribute("pendingCommentCount", commentModerationService.countPendingComments());
         populateLayoutModel(
                 model,
-                "Review Queue",
-                "Review submissions, publish approved articles, and keep editorial flow moving.",
+                "Hàng đợi duyệt",
+                "Xem xét bài gửi, xuất bản bài đạt yêu cầu và giữ luồng biên tập luôn thông suốt.",
                 "editor_queue");
         return "editor/dashboard";
     }
@@ -41,8 +41,8 @@ public class EditorWorkflowController {
         model.addAttribute("article", articleWorkflowService.getArticleForEditorReview(id));
         populateLayoutModel(
                 model,
-                "Review Article",
-                "Inspect the submission and decide whether to publish it, request changes, or cancel it.",
+                "Duyệt bài viết",
+                "Xem nội dung bài gửi và quyết định xuất bản, yêu cầu chỉnh sửa hoặc hủy bài.",
                 "editor_queue");
         return "editor/article-review";
     }
@@ -50,7 +50,7 @@ public class EditorWorkflowController {
     @PostMapping("/article/publish/{id}")
     public String publishArticle(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         articleWorkflowService.publish(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Article published successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã xuất bản bài viết thành công.");
         return "redirect:/editor";
     }
 
@@ -60,7 +60,7 @@ public class EditorWorkflowController {
             @RequestParam(required = false) String reviewNote,
             RedirectAttributes redirectAttributes) {
         articleWorkflowService.requestChanges(id, reviewNote);
-        redirectAttributes.addFlashAttribute("successMessage", "Article sent back for changes.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã gửi lại bài viết để tác giả chỉnh sửa.");
         return "redirect:/editor";
     }
 
@@ -70,7 +70,7 @@ public class EditorWorkflowController {
             @RequestParam(required = false) String reviewNote,
             RedirectAttributes redirectAttributes) {
         articleWorkflowService.cancelByEditor(id, reviewNote);
-        redirectAttributes.addFlashAttribute("successMessage", "Article cancelled successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã hủy bài viết thành công.");
         return "redirect:/editor";
     }
 
@@ -79,8 +79,8 @@ public class EditorWorkflowController {
         model.addAttribute("pendingComments", commentModerationService.findPendingComments());
         populateLayoutModel(
                 model,
-                "Pending Comments",
-                "Approve or reject reader comments before they appear publicly.",
+                "Bình luận chờ duyệt",
+                "Duyệt hoặc từ chối bình luận của độc giả trước khi hiển thị công khai.",
                 "editor_comments");
         return "editor/comments";
     }
@@ -88,14 +88,14 @@ public class EditorWorkflowController {
     @PostMapping("/comment/approve/{id}")
     public String approveComment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         commentModerationService.approveComment(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Comment approved successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã duyệt bình luận thành công.");
         return "redirect:/editor/comments";
     }
 
     @PostMapping("/comment/reject/{id}")
     public String rejectComment(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         commentModerationService.rejectComment(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Comment rejected successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã từ chối bình luận.");
         return "redirect:/editor/comments";
     }
 

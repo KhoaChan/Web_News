@@ -5,5 +5,15 @@ public enum ArticleStatus {
     IN_REVIEW,
     CHANGES_REQUESTED,
     PUBLISHED,
-    CANCELLED
+    CANCELLED;
+
+    public String getDisplayName() {
+        return switch (this) {
+            case DRAFT -> "Bản nháp";
+            case IN_REVIEW -> "Chờ duyệt";
+            case CHANGES_REQUESTED -> "Cần chỉnh sửa";
+            case PUBLISHED -> "Đã xuất bản";
+            case CANCELLED -> "Đã hủy";
+        };
+    }
 }

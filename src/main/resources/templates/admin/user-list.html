@@ -7,10 +7,10 @@
         <div class="card backoffice-card">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="m-0 text-primary">User List</h5>
-                    <div class="small text-muted">Admin keeps full control over all newsroom roles from the same backoffice shell.</div>
+                    <h5 class="m-0 text-primary">Danh sách người dùng</h5>
+                    <div class="small text-muted">Quản trị viên kiểm soát toàn bộ vai trò trong tòa soạn ngay trên cùng một khu vực quản trị.</div>
                 </div>
-                <a th:href="@{/admin/user/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New User</a>
+                <a th:href="@{/admin/user/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tạo người dùng</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -18,37 +18,37 @@
                         <thead>
                         <tr>
                             <th class="ps-3">ID</th>
-                            <th>User</th>
+                            <th>Người dùng</th>
                             <th>Email</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="user : ${users}">
                             <td class="ps-3 fw-bold text-secondary" th:text="${user.id}">1</td>
                             <td>
-                                <div class="fw-bold text-dark" th:text="${user.fullName != null and !#strings.isEmpty(user.fullName) ? user.fullName : user.username}">Display name</div>
+                                <div class="fw-bold text-dark" th:text="${user.fullName != null and !#strings.isEmpty(user.fullName) ? user.fullName : user.username}">Tên hiển thị</div>
                                 <small class="text-muted" th:text="${user.username}">username</small>
                             </td>
                             <td th:text="${user.email}">email</td>
-                            <td><span class="badge bg-info text-dark" th:text="${user.role.name()}">USER</span></td>
+                            <td><span class="badge bg-info text-dark" th:text="${user.role.displayName}">Người dùng</span></td>
                             <td>
-                                <span class="badge bg-success" th:if="${user.enabled}">Enabled</span>
-                                <span class="badge bg-secondary" th:if="${!user.enabled}">Disabled</span>
+                                <span class="badge bg-success" th:if="${user.enabled}">Đang hoạt động</span>
+                                <span class="badge bg-secondary" th:if="${!user.enabled}">Đã khóa</span>
                             </td>
                             <td class="text-center">
                                 <a th:href="@{/admin/user/edit/{id}(id=${user.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
                                 <form th:action="@{/admin/user/toggle-status/{id}(id=${user.id})}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-warning btn-sm" th:title="${user.enabled ? 'Disable user' : 'Enable user'}">
+                                    <button type="submit" class="btn btn-outline-warning btn-sm" th:title="${user.enabled ? 'Khóa người dùng' : 'Mở khóa người dùng'}">
                                         <i class="fas" th:classappend="${user.enabled} ? ' fa-user-slash' : ' fa-user-check'"></i>
                                     </button>
                                 </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(users)}">
-                            <td colspan="6" class="text-center py-4 text-muted">No users found.</td>
+                            <td colspan="6" class="text-center py-4 text-muted">Chưa có người dùng nào.</td>
                         </tr>
                         </tbody>
                     </table>

@@ -29,8 +29,8 @@ public class AdminUserController {
         model.addAttribute("users", userManagementService.findAllUsers());
         populateLayoutModel(
                 model,
-                "Users",
-                "Manage reader, author, editor, and admin access safely.",
+                "Người dùng",
+                "Quản lý an toàn quyền truy cập của độc giả, tác giả, biên tập viên và quản trị viên.",
                 "admin_users");
         return "admin/user-list";
     }
@@ -62,10 +62,10 @@ public class AdminUserController {
 
         if (userForm.getId() == null) {
             userManagementService.createUser(userForm);
-            redirectAttributes.addFlashAttribute("successMessage", "User created successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Tạo người dùng thành công.");
         } else {
             userManagementService.updateUser(principal.getId(), userForm);
-            redirectAttributes.addFlashAttribute("successMessage", "User updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật người dùng thành công.");
         }
 
         return "redirect:/admin/users";
@@ -77,7 +77,7 @@ public class AdminUserController {
             @PathVariable Long id,
             RedirectAttributes redirectAttributes) {
         var updatedUser = userManagementService.toggleEnabled(principal.getId(), id);
-        String message = updatedUser.isEnabled() ? "User enabled successfully." : "User disabled successfully.";
+        String message = updatedUser.isEnabled() ? "Đã kích hoạt người dùng." : "Đã vô hiệu hóa người dùng.";
         redirectAttributes.addFlashAttribute("successMessage", message);
         return "redirect:/admin/users";
     }
@@ -87,8 +87,8 @@ public class AdminUserController {
         model.addAttribute("roles", Role.values());
         populateLayoutModel(
                 model,
-                userForm.getId() == null ? "Create User" : "Edit User",
-                "Create and manage user accounts across all newsroom roles.",
+                userForm.getId() == null ? "Tạo người dùng" : "Chỉnh sửa người dùng",
+                "Tạo và quản lý tài khoản cho tất cả vai trò trong tòa soạn.",
                 "admin_users");
     }
 

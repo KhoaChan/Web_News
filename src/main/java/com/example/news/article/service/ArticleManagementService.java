@@ -65,31 +65,31 @@ public class ArticleManagementService {
             try {
                 categoryService.getById(form.getCategoryId());
             } catch (ResourceNotFoundException exception) {
-                bindingResult.rejectValue("categoryId", "notFound", "Category not found");
+                bindingResult.rejectValue("categoryId", "notFound", "Không tìm thấy chuyên mục");
             }
         }
 
         if (form.getId() == null) {
             if (articleRepository.existsBySlug(form.getSlug())) {
-                bindingResult.rejectValue("slug", "duplicate", "Slug already exists");
+                bindingResult.rejectValue("slug", "duplicate", "Slug đã tồn tại");
             }
             return;
         }
 
         if (articleRepository.existsBySlugAndIdNot(form.getSlug(), form.getId())) {
-            bindingResult.rejectValue("slug", "duplicate", "Slug already exists");
+            bindingResult.rejectValue("slug", "duplicate", "Slug đã tồn tại");
         }
     }
 
     @Transactional
     public Article createArticle(ArticleForm form, MultipartFile file, String username) {
         if (username == null) {
-            throw new InvalidOperationException("Authenticated user is required");
+            throw new InvalidOperationException("Bạn cần đăng nhập để thực hiện thao tác này");
         }
 
         Article article = new Article();
         article.setAuthor(userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Author not found for username: " + username)));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy tác giả với tên đăng nhập: " + username)));
         mapFormToArticle(article, form, file);
         return articleRepository.save(article);
     }
@@ -108,7 +108,7 @@ public class ArticleManagementService {
 
     private Article getArticle(Long id) {
         return articleRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với ID: " + id));
     }
 
     private void mapFormToArticle(Article article, ArticleForm form, MultipartFile file) {

@@ -33,8 +33,8 @@ public class AdminArticleController {
         model.addAttribute("articles", articleManagementService.findAllForAdmin());
         populateLayoutModel(
                 model,
-                "Articles",
-                "Manage content, editorial status, and publishing from one workspace.",
+                "Bài viết",
+                "Quản lý nội dung, trạng thái biên tập và xuất bản trong một khu vực làm việc.",
                 "admin_articles");
         return "admin/dashboard";
     }
@@ -67,10 +67,10 @@ public class AdminArticleController {
 
         if (articleForm.getId() == null) {
             articleManagementService.createArticle(articleForm, file, principal == null ? null : principal.getName());
-            redirectAttributes.addFlashAttribute("successMessage", "Article created successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Tạo bài viết thành công.");
         } else {
             articleManagementService.updateArticle(articleForm.getId(), articleForm, file);
-            redirectAttributes.addFlashAttribute("successMessage", "Article updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật bài viết thành công.");
         }
 
         return "redirect:/admin";
@@ -79,7 +79,7 @@ public class AdminArticleController {
     @GetMapping("/admin/article/delete/{id}")
     public String deleteArticle(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         articleManagementService.deleteArticle(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Article deleted successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Xóa bài viết thành công.");
         return "redirect:/admin";
     }
 
@@ -89,8 +89,8 @@ public class AdminArticleController {
         model.addAttribute("articleStatuses", ArticleStatus.values());
         populateLayoutModel(
                 model,
-                articleForm.getId() == null ? "Create Article" : "Edit Article",
-                "Manage content, editorial status, and review notes from one form.",
+                articleForm.getId() == null ? "Tạo bài viết" : "Chỉnh sửa bài viết",
+                "Quản lý nội dung, trạng thái biên tập và ghi chú duyệt trong cùng một biểu mẫu.",
                 "admin_articles");
     }
 

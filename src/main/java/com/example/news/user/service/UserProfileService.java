@@ -22,7 +22,7 @@ public class UserProfileService {
 
     public User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng với ID: " + userId));
     }
 
     public UserProfileForm getProfileForm(Long userId) {
@@ -40,12 +40,12 @@ public class UserProfileService {
     public void validateProfileForm(Long userId, UserProfileForm form, BindingResult bindingResult) {
         String email = normalize(form.getEmail());
         if (!StringUtils.hasText(email)) {
-            bindingResult.rejectValue("email", "required", "Email is required");
+            bindingResult.rejectValue("email", "required", "Vui lòng nhập email");
             return;
         }
 
         if (userRepository.existsByEmailAndIdNot(email, userId)) {
-            bindingResult.rejectValue("email", "duplicate", "Email already exists");
+            bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
         }
     }
 
@@ -60,12 +60,12 @@ public class UserProfileService {
         User user = getUser(userId);
 
         if (StringUtils.hasText(form.getCurrentPassword()) && !passwordEncoder.matches(form.getCurrentPassword(), user.getPassword())) {
-            bindingResult.rejectValue("currentPassword", "invalid", "Current password is incorrect");
+            bindingResult.rejectValue("currentPassword", "invalid", "Mật khẩu hiện tại không đúng");
         }
 
         if (StringUtils.hasText(form.getNewPassword()) && StringUtils.hasText(form.getConfirmPassword())
                 && !form.getNewPassword().equals(form.getConfirmPassword())) {
-            bindingResult.rejectValue("confirmPassword", "mismatch", "Password confirmation does not match");
+            bindingResult.rejectValue("confirmPassword", "mismatch", "Xác nhận mật khẩu không khớp");
         }
     }
 

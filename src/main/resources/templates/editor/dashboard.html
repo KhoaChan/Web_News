@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
 <body class="backoffice-body">
@@ -8,10 +8,10 @@
             <div class="col-lg-4">
                 <div class="card backoffice-card h-100">
                     <div class="card-body">
-                        <div class="text-muted small text-uppercase fw-bold mb-2">Moderation</div>
+                        <div class="text-muted small text-uppercase fw-bold mb-2">Kiểm duyệt</div>
                         <div class="display-6 fw-bold mb-2" th:text="${pendingCommentCount}">0</div>
-                        <p class="text-muted mb-3">Comments are waiting for editorial approval before they appear publicly.</p>
-                        <a th:href="@{/editor/comments}" class="btn btn-outline-primary btn-sm"><i class="fas fa-comments me-1"></i>Open Comment Queue</a>
+                        <p class="text-muted mb-3">Các bình luận đang chờ biên tập viên duyệt trước khi hiển thị công khai.</p>
+                        <a th:href="@{/editor/comments}" class="btn btn-outline-primary btn-sm"><i class="fas fa-comments me-1"></i>Mở hàng đợi bình luận</a>
                     </div>
                 </div>
             </div>
@@ -19,29 +19,29 @@
 
         <div class="card backoffice-card mb-4">
             <div class="card-header py-3">
-                <h2 class="h5 mb-0">Review Queue</h2>
+                <h2 class="h5 mb-0">Hàng đợi duyệt bài</h2>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 align-middle">
                         <thead>
                         <tr>
-                            <th class="ps-3">Title</th>
-                            <th>Author</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th class="ps-3">Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Chuyên mục</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="article : ${reviewQueue}">
                             <td class="ps-3">
-                                <div class="fw-bold" th:text="${article.title}">Article</div>
+                                <div class="fw-bold" th:text="${article.title}">Bài viết</div>
                                 <small class="text-muted" th:text="${article.slug}">slug</small>
                             </td>
-                            <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Author</td>
-                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
-                            <td><span class="badge bg-primary" th:text="${article.status.name()}">IN_REVIEW</span></td>
+                            <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Tác giả</td>
+                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Chuyên mục</span></td>
+                            <td><span class="badge bg-primary" th:text="${article.status.displayName}">Chờ duyệt</span></td>
                             <td class="text-center">
                                 <a th:href="@{/editor/article/review/{id}(id=${article.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-search"></i></a>
                                 <form th:action="@{/editor/article/publish/{id}(id=${article.id})}" method="post" class="d-inline">
@@ -50,7 +50,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(reviewQueue)}">
-                            <td colspan="5" class="text-center py-4 text-muted">No articles are waiting for review.</td>
+                            <td colspan="5" class="text-center py-4 text-muted">Không có bài viết nào đang chờ duyệt.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -61,28 +61,28 @@
         <div class="row g-4">
             <div class="col-lg-6">
                 <div class="card backoffice-card h-100">
-                    <div class="card-header py-3"><h2 class="h5 mb-0">Published</h2></div>
+                    <div class="card-header py-3"><h2 class="h5 mb-0">Đã xuất bản</h2></div>
                     <div class="card-body p-0">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="article : ${publishedArticles}">
-                                <div class="fw-bold" th:text="${article.title}">Title</div>
-                                <small class="text-muted" th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">author</small>
+                                <div class="fw-bold" th:text="${article.title}">Tiêu đề</div>
+                                <small class="text-muted" th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Tác giả</small>
                             </li>
-                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(publishedArticles)}">No published articles yet.</li>
+                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(publishedArticles)}">Chưa có bài viết nào được xuất bản.</li>
                         </ul>
                     </div>
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="card backoffice-card h-100">
-                    <div class="card-header py-3"><h2 class="h5 mb-0">Cancelled</h2></div>
+                    <div class="card-header py-3"><h2 class="h5 mb-0">Đã hủy</h2></div>
                     <div class="card-body p-0">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item" th:each="article : ${cancelledArticles}">
-                                <div class="fw-bold" th:text="${article.title}">Title</div>
-                                <small class="text-muted" th:text="${article.reviewNote != null ? article.reviewNote : 'No cancellation note'}">note</small>
+                                <div class="fw-bold" th:text="${article.title}">Tiêu đề</div>
+                                <small class="text-muted" th:text="${article.reviewNote != null ? article.reviewNote : 'Chưa có ghi chú hủy'}">Ghi chú</small>
                             </li>
-                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(cancelledArticles)}">No cancelled articles.</li>
+                            <li class="list-group-item text-muted" th:if="${#lists.isEmpty(cancelledArticles)}">Chưa có bài viết nào bị hủy.</li>
                         </ul>
                     </div>
                 </div>
@@ -92,3 +92,4 @@
 </div>
 </body>
 </html>
+

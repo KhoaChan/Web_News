@@ -34,8 +34,8 @@ public class AuthorArticleController {
         model.addAttribute("articles", articleWorkflowService.findAuthorArticles(principal.getUsername()));
         populateLayoutModel(
                 model,
-                "My Articles",
-                "Create drafts, submit them for review, and track editorial feedback.",
+                "Bài viết của tôi",
+                "Tạo bản nháp, gửi duyệt và theo dõi phản hồi từ biên tập.",
                 "author_articles");
         return "author/dashboard";
     }
@@ -71,10 +71,10 @@ public class AuthorArticleController {
 
         if (articleForm.getId() == null) {
             articleWorkflowService.createAuthorArticle(articleForm, file, principal.getUsername());
-            redirectAttributes.addFlashAttribute("successMessage", "Draft saved successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã lưu bản nháp thành công.");
         } else {
             articleWorkflowService.updateAuthorArticle(articleForm.getId(), articleForm, file, principal.getUsername());
-            redirectAttributes.addFlashAttribute("successMessage", "Draft updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật bản nháp thành công.");
         }
         return "redirect:/author";
     }
@@ -85,7 +85,7 @@ public class AuthorArticleController {
             @AuthenticationPrincipal NewsUserPrincipal principal,
             RedirectAttributes redirectAttributes) {
         articleWorkflowService.submitForReview(id, principal.getUsername());
-        redirectAttributes.addFlashAttribute("successMessage", "Article submitted for editorial review.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã gửi bài viết vào hàng đợi duyệt.");
         return "redirect:/author";
     }
 
@@ -95,7 +95,7 @@ public class AuthorArticleController {
             @AuthenticationPrincipal NewsUserPrincipal principal,
             RedirectAttributes redirectAttributes) {
         articleWorkflowService.cancelByAuthor(id, principal.getUsername());
-        redirectAttributes.addFlashAttribute("successMessage", "Article cancelled successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã hủy bài viết thành công.");
         return "redirect:/author";
     }
 
@@ -104,10 +104,10 @@ public class AuthorArticleController {
         model.addAttribute("categories", categoryService.findAll());
         populateLayoutModel(
                 model,
-                isCreate ? "Create Draft" : "Edit Draft",
+                isCreate ? "Tạo bản nháp" : "Chỉnh sửa bản nháp",
                 isCreate
-                        ? "Save content privately, then submit it when it is ready for editorial review."
-                        : "Update your draft, respond to review notes, and keep it ready for resubmission.",
+                        ? "Lưu nội dung ở chế độ riêng tư, sau đó gửi duyệt khi bài viết đã sẵn sàng."
+                        : "Cập nhật bản nháp, phản hồi ghi chú duyệt và chuẩn bị để gửi lại.",
                 isCreate ? "author_create" : "author_articles");
     }
 

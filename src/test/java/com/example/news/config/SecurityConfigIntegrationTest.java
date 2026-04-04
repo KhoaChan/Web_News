@@ -115,81 +115,81 @@ class SecurityConfigIntegrationTest {
     void adminDashboardShouldShowAdminEditorialAndAuthorMenus() throws Exception {
         mockMvc.perform(get("/admin").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/admin/users")))
                 .andExpect(content().string(containsString("/editor/comments")))
                 .andExpect(content().string(containsString("/author/article/create")))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void editorDashboardShouldHideAdminAndAuthorMenus() throws Exception {
         mockMvc.perform(get("/editor").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/editor/comments")))
                 .andExpect(content().string(not(containsString("/admin/users"))))
                 .andExpect(content().string(not(containsString("/admin/categories"))))
                 .andExpect(content().string(not(containsString("/author/article/create"))))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void authorDashboardShouldHideAdminAndEditorialMenus() throws Exception {
         mockMvc.perform(get("/author").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/author/article/create")))
                 .andExpect(content().string(not(containsString("/editor/comments"))))
                 .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void adminProfileShouldUseBackofficeLayoutAndShowAllMenus() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/admin/users")))
                 .andExpect(content().string(containsString("/editor/comments")))
                 .andExpect(content().string(containsString("/author/article/create")))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void editorProfileShouldUseBackofficeLayoutWithoutAdminMenus() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/editor/comments")))
                 .andExpect(content().string(not(containsString("/admin/users"))))
                 .andExpect(content().string(not(containsString("/author/article/create"))))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void authorProfileShouldUseBackofficeLayoutWithoutEditorialMenus() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")))
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/author/article/create")))
                 .andExpect(content().string(not(containsString("/editor/comments"))))
                 .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(containsString("Return to News")));
+                .andExpect(content().string(containsString("Quay về trang tin")));
     }
 
     @Test
     void userProfileShouldStayOutsideBackofficeLayout() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(readerUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Back to home")))
-                .andExpect(content().string(not(containsString("News Backoffice"))))
+                .andExpect(content().string(containsString("Quay về trang chủ")))
+                .andExpect(content().string(not(containsString("Khu vực quản trị News"))))
                 .andExpect(content().string(not(containsString("/admin/users"))))
                 .andExpect(content().string(not(containsString("/editor/comments"))))
                 .andExpect(content().string(not(containsString("/author/article/create"))));
@@ -199,23 +199,23 @@ class SecurityConfigIntegrationTest {
     void sharedLayoutShouldRenderOnBackofficeForms() throws Exception {
         mockMvc.perform(get("/admin/article/create").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")));
 
         mockMvc.perform(get("/admin/user/create").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")));
 
         mockMvc.perform(get("/author/article/create").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")));
 
         mockMvc.perform(get("/editor/comments").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("News Backoffice")))
-                .andExpect(content().string(containsString("Collapse sidebar")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")))
+                .andExpect(content().string(containsString("Thu gọn thanh bên")));
     }
 
     @Test

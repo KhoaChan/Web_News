@@ -54,7 +54,7 @@ public class ProfileController {
         }
 
         userProfileService.updateProfile(principal.getId(), profileForm);
-        redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã cập nhật hồ sơ thành công.");
         return "redirect:/profile";
     }
 
@@ -73,15 +73,15 @@ public class ProfileController {
         }
 
         userProfileService.changePassword(principal.getId(), changePasswordForm);
-        redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully.");
+        redirectAttributes.addFlashAttribute("successMessage", "Đã đổi mật khẩu thành công.");
         return "redirect:/profile";
     }
 
     private void populateCommonModel(NewsUserPrincipal principal, Model model) {
         model.addAttribute("currentUser", userProfileService.getUser(principal.getId()));
         if (usesBackofficeProfile(principal)) {
-            model.addAttribute("pageTitle", "My Profile");
-            model.addAttribute("pageSubtitle", "Manage your account information and password from the shared workspace.");
+            model.addAttribute("pageTitle", "Hồ sơ của tôi");
+            model.addAttribute("pageSubtitle", "Quản lý thông tin tài khoản và mật khẩu trong khu vực làm việc chung.");
             model.addAttribute("activeKey", "profile");
         }
     }

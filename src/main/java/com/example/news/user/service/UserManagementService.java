@@ -48,7 +48,7 @@ public class UserManagementService {
 
     public User getUser(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy người dùng với ID: " + id));
     }
 
     public void validateAdminUserForm(Long currentAdminId, AdminUserForm form, BindingResult bindingResult) {
@@ -57,33 +57,33 @@ public class UserManagementService {
 
         if (form.getId() == null) {
             if (userRepository.existsByUsername(username)) {
-                bindingResult.rejectValue("username", "duplicate", "Username already exists");
+                bindingResult.rejectValue("username", "duplicate", "Tên đăng nhập đã tồn tại");
             }
             if (userRepository.existsByEmail(email)) {
-                bindingResult.rejectValue("email", "duplicate", "Email already exists");
+                bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
             }
             if (!StringUtils.hasText(form.getPassword())) {
-                bindingResult.rejectValue("password", "required", "Password is required for a new user");
+                bindingResult.rejectValue("password", "required", "Vui lòng nhập mật khẩu cho người dùng mới");
             }
         } else {
             if (userRepository.existsByUsernameAndIdNot(username, form.getId())) {
-                bindingResult.rejectValue("username", "duplicate", "Username already exists");
+                bindingResult.rejectValue("username", "duplicate", "Tên đăng nhập đã tồn tại");
             }
             if (userRepository.existsByEmailAndIdNot(email, form.getId())) {
-                bindingResult.rejectValue("email", "duplicate", "Email already exists");
+                bindingResult.rejectValue("email", "duplicate", "Email đã tồn tại");
             }
         }
 
         if (StringUtils.hasText(form.getPassword()) && form.getPassword().trim().length() < 6) {
-            bindingResult.rejectValue("password", "length", "Password must be at least 6 characters");
+            bindingResult.rejectValue("password", "length", "Mật khẩu phải có ít nhất 6 ký tự");
         }
 
         if (form.getId() != null && form.getId().equals(currentAdminId) && !form.isEnabled()) {
-            bindingResult.rejectValue("enabled", "selfDisable", "You cannot disable your own account");
+            bindingResult.rejectValue("enabled", "selfDisable", "Bạn không thể tự khóa tài khoản của chính mình");
         }
 
         if (form.getId() != null && form.getId().equals(currentAdminId) && !Role.ADMIN.name().equals(form.getRole())) {
-            bindingResult.rejectValue("role", "selfDemote", "You cannot change your own role away from ADMIN");
+            bindingResult.rejectValue("role", "selfDemote", "Bạn không thể tự đổi vai trò của mình khỏi Quản trị viên");
         }
     }
 
@@ -97,11 +97,11 @@ public class UserManagementService {
         User user = getUser(form.getId());
 
         if (user.getId().equals(currentAdminId) && !Role.ADMIN.name().equals(form.getRole())) {
-            throw new InvalidOperationException("You cannot change your own role away from ADMIN");
+            throw new InvalidOperationException("Bạn không thể tự đổi vai trò của mình khỏi Quản trị viên");
         }
 
         if (user.getId().equals(currentAdminId) && !form.isEnabled()) {
-            throw new InvalidOperationException("You cannot disable your own account");
+            throw new InvalidOperationException("Bạn không thể tự khóa tài khoản của chính mình");
         }
 
         mapFormToUser(user, form, false);
@@ -111,7 +111,7 @@ public class UserManagementService {
     public User toggleEnabled(Long currentAdminId, Long targetUserId) {
         User user = getUser(targetUserId);
         if (user.getId().equals(currentAdminId)) {
-            throw new InvalidOperationException("You cannot disable your own account");
+            throw new InvalidOperationException("Bạn không thể tự khóa tài khoản của chính mình");
         }
         user.setEnabled(!user.isEnabled());
         return userRepository.save(user);

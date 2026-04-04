@@ -27,7 +27,7 @@ public class StorageService {
 
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
         if (!StringUtils.hasText(originalFilename) || originalFilename.contains("..")) {
-            throw new StorageException("Invalid file name");
+            throw new StorageException("Tên tệp không hợp lệ");
         }
 
         try {
@@ -37,11 +37,11 @@ public class StorageService {
                     ObjectUtils.asMap("public_id", buildPublicId(originalFilename)));
             Object secureUrl = uploadResult.get("secure_url");
             if (secureUrl == null) {
-                throw new StorageException("Cloudinary did not return a file URL");
+                throw new StorageException("Cloudinary không trả về đường dẫn tệp");
             }
             return secureUrl.toString();
         } catch (IOException exception) {
-            throw new StorageException("Could not upload file to Cloudinary", exception);
+            throw new StorageException("Không thể tải tệp lên Cloudinary", exception);
         }
     }
 

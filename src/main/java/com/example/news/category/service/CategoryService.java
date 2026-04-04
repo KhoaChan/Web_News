@@ -27,12 +27,12 @@ public class CategoryService {
 
     public Category getById(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy chuyên mục với ID: " + id));
     }
 
     public Category getBySlug(String slug) {
         return categoryRepository.findBySlug(slug)
-                .orElseThrow(() -> new ResourceNotFoundException("Category not found with slug: " + slug));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy chuyên mục với slug: " + slug));
     }
 
     public CategoryForm buildForm() {
@@ -52,19 +52,19 @@ public class CategoryService {
     public void validateCategoryForm(CategoryForm form, BindingResult bindingResult) {
         if (form.getId() == null) {
             if (categoryRepository.existsBySlug(form.getSlug())) {
-                bindingResult.rejectValue("slug", "duplicate", "Slug already exists");
+                bindingResult.rejectValue("slug", "duplicate", "Slug đã tồn tại");
             }
             if (categoryRepository.existsByNameIgnoreCase(form.getName())) {
-                bindingResult.rejectValue("name", "duplicate", "Category name already exists");
+                bindingResult.rejectValue("name", "duplicate", "Tên chuyên mục đã tồn tại");
             }
             return;
         }
 
         if (categoryRepository.existsBySlugAndIdNot(form.getSlug(), form.getId())) {
-            bindingResult.rejectValue("slug", "duplicate", "Slug already exists");
+            bindingResult.rejectValue("slug", "duplicate", "Slug đã tồn tại");
         }
         if (categoryRepository.existsByNameIgnoreCaseAndIdNot(form.getName(), form.getId())) {
-            bindingResult.rejectValue("name", "duplicate", "Category name already exists");
+            bindingResult.rejectValue("name", "duplicate", "Tên chuyên mục đã tồn tại");
         }
     }
 
@@ -83,7 +83,7 @@ public class CategoryService {
     public void deleteCategory(Long id) {
         Category category = getById(id);
         if (articleRepository.existsByCategoryId(category.getId())) {
-            throw new InvalidOperationException("Cannot delete a category that still has articles");
+            throw new InvalidOperationException("Không thể xóa chuyên mục vẫn còn bài viết");
         }
         categoryRepository.delete(category);
     }

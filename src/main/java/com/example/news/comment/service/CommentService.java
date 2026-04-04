@@ -25,10 +25,10 @@ public class CommentService {
     @Transactional
     public Comment createComment(CommentForm form) {
         var article = articleRepository.findById(form.getArticleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Article not found with id: " + form.getArticleId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bài viết với ID: " + form.getArticleId()));
 
         if (article.getStatus() != ArticleStatus.PUBLISHED) {
-            throw new ResourceNotFoundException("Article is not available for comments");
+            throw new ResourceNotFoundException("Bài viết hiện không nhận bình luận");
         }
 
         Comment comment = new Comment();

@@ -13,29 +13,29 @@ public class ArticleForm {
 
     private Long id;
 
-    @NotBlank(message = "Title is required")
-    @Size(max = 255, message = "Title must be at most 255 characters")
+    @NotBlank(message = "Vui lòng nhập tiêu đề")
+    @Size(max = 255, message = "Tiêu đề tối đa 255 ký tự")
     private String title;
 
-    @NotBlank(message = "Slug is required")
-    @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "Slug must use lowercase letters, numbers and hyphens")
+    @NotBlank(message = "Vui lòng nhập slug")
+    @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "Slug chỉ được chứa chữ thường, số và dấu gạch nối")
     private String slug;
 
-    @NotBlank(message = "Summary is required")
-    @Size(max = 500, message = "Summary must be at most 500 characters")
+    @NotBlank(message = "Vui lòng nhập tóm tắt")
+    @Size(max = 500, message = "Tóm tắt tối đa 500 ký tự")
     private String summary;
 
-    @NotBlank(message = "Content is required")
+    @NotBlank(message = "Vui lòng nhập nội dung")
     private String content;
 
-    @NotNull(message = "Category is required")
+    @NotNull(message = "Vui lòng chọn chuyên mục")
     private Long categoryId;
 
-    @NotBlank(message = "Status is required")
-    @Pattern(regexp = "^(DRAFT|IN_REVIEW|CHANGES_REQUESTED|PUBLISHED|CANCELLED)$", message = "Status is invalid")
+    @NotBlank(message = "Vui lòng chọn trạng thái")
+    @Pattern(regexp = "^(DRAFT|IN_REVIEW|CHANGES_REQUESTED|PUBLISHED|CANCELLED)$", message = "Trạng thái không hợp lệ")
     private String status = "DRAFT";
 
-    @Size(max = 1000, message = "Review note must be at most 1000 characters")
+    @Size(max = 1000, message = "Ghi chú duyệt tối đa 1000 ký tự")
     private String reviewNote;
 
     private String thumbnailUrl;

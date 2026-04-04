@@ -43,9 +43,9 @@ public class CommentModerationService {
 
     private Comment getPendingComment(Long id) {
         Comment comment = commentRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Không tìm thấy bình luận với ID: " + id));
         if (comment.getStatus() != CommentStatus.PENDING) {
-            throw new InvalidOperationException("Comment is no longer pending moderation");
+            throw new InvalidOperationException("Bình luận này không còn ở trạng thái chờ duyệt");
         }
         return comment;
     }

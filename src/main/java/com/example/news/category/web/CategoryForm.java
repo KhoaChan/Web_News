@@ -12,14 +12,14 @@ public class CategoryForm {
 
     private Long id;
 
-    @NotBlank(message = "Category name is required")
-    @Size(max = 100, message = "Category name must be at most 100 characters")
+    @NotBlank(message = "Vui lòng nhập tên chuyên mục")
+    @Size(max = 100, message = "Tên chuyên mục tối đa 100 ký tự")
     private String name;
 
-    @NotBlank(message = "Slug is required")
-    @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "Slug must use lowercase letters, numbers and hyphens")
+    @NotBlank(message = "Vui lòng nhập slug")
+    @Pattern(regexp = "^[a-z0-9]+(?:-[a-z0-9]+)*$", message = "Slug chỉ được chứa chữ thường, số và dấu gạch nối")
     private String slug;
 
-    @Size(max = 255, message = "Description must be at most 255 characters")
+    @Size(max = 255, message = "Mô tả tối đa 255 ký tự")
     private String description;
 }

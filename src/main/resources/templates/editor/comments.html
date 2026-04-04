@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments/backoffice :: head(${pageTitle})}"></head>
 <body class="backoffice-body">
@@ -10,30 +10,30 @@
                     <table class="table table-hover mb-0 align-middle">
                         <thead>
                         <tr>
-                            <th class="ps-3">Article</th>
-                            <th>Reader</th>
-                            <th>Comment</th>
-                            <th>Submitted</th>
-                            <th class="text-center">Actions</th>
+                            <th class="ps-3">Bài viết</th>
+                            <th>Độc giả</th>
+                            <th>Bình luận</th>
+                            <th>Thời gian gửi</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="comment : ${pendingComments}">
-                            <td class="ps-3 fw-bold" th:text="${comment.article.title}">Article</td>
-                            <td th:text="${comment.commenterName}">Reader</td>
-                            <td th:text="${comment.content}">Comment</td>
-                            <td th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Time</td>
+                            <td class="ps-3 fw-bold" th:text="${comment.article.title}">Bài viết</td>
+                            <td th:text="${comment.commenterName}">Độc giả</td>
+                            <td th:text="${comment.content}">Bình luận</td>
+                            <td th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}">Thời gian</td>
                             <td class="text-center">
                                 <form th:action="@{/editor/comment/approve/{id}(id=${comment.id})}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-success btn-sm me-1">Approve</button>
+                                    <button type="submit" class="btn btn-outline-success btn-sm me-1">Duyệt</button>
                                 </form>
                                 <form th:action="@{/editor/comment/reject/{id}(id=${comment.id})}" method="post" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-danger btn-sm">Reject</button>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Từ chối</button>
                                 </form>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(pendingComments)}">
-                            <td colspan="5" class="text-center py-4 text-muted">No comments are waiting for moderation.</td>
+                            <td colspan="5" class="text-center py-4 text-muted">Không có bình luận nào đang chờ kiểm duyệt.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -44,3 +44,4 @@
 </div>
 </body>
 </html>
+

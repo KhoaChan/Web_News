@@ -10,14 +10,14 @@ import lombok.Setter;
 @Setter
 public class CommentForm {
 
-    @NotNull(message = "Article is required")
+    @NotNull(message = "Bài viết không hợp lệ")
     private Long articleId;
 
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must be at most 100 characters")
+    @NotBlank(message = "Vui lòng nhập tên")
+    @Size(max = 100, message = "Tên tối đa 100 ký tự")
     private String name;
 
-    @NotBlank(message = "Comment is required")
-    @Size(max = 1000, message = "Comment must be at most 1000 characters")
+    @NotBlank(message = "Vui lòng nhập bình luận")
+    @Size(max = 1000, message = "Bình luận tối đa 1000 ký tự")
     private String content;
 }

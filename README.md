@@ -1,125 +1,260 @@
-# NewsWebsite
+# News
 
-Ung dung web tin tuc xay dung bang Spring Boot theo mo hinh MVC, su dung Thymeleaf de render giao dien va MySQL de luu tru du lieu. Du an hien dang o giai doan hoc tap/demo, huong toi mo phong mot website tin tuc co trang doc bai viet cong khai va khu vuc quan tri noi dung cho admin.
+Ung dung web tin tuc xay dung bang Spring Boot theo mo hinh MVC, su dung Thymeleaf de render giao dien va MySQL de luu tru du lieu. Du an hien tai da vuot qua muc mini CMS co CRUD co ban va dang hoat dong nhu mot he thong demo newsroom co public site, auth, quan ly user, editorial workflow, comment moderation va backoffice theo role.
 
-## Ban dang lam gi trong du an nay?
+## Tong quan nhanh
 
-Tu codebase hien tai, co the thay ban dang xay dung:
+Tu codebase hien tai, du an dang mo phong mot he thong tin tuc gom:
 
-- Mot website tin tuc co giao dien trang chu, danh sach bai viet, loc theo chuyen muc, tim kiem va trang chi tiet bai viet.
-- Mot khu vuc admin de dang nhap, quan ly bai viet, quan ly chuyen muc va upload anh dai dien.
-- He thong xac thuc/phan quyen voi Spring Security, trong do duong dan `/admin/**` chi cho tai khoan co vai tro `ADMIN`.
-- Co che seed du lieu mau khi khoi dong de co san tai khoan admin, chuyen muc va mot so bai viet mau.
+- Public site de doc bai viet, tim kiem, loc theo chuyen muc va gui binh luan.
+- He thong dang nhap, dang ky, profile va doi mat khau.
+- Backoffice dung chung layout cho `ADMIN`, `EDITOR`, `AUTHOR`.
+- Workflow bien tap cho bai viet tu ban nhap den xuat ban.
+- Moderation comment truoc khi hien cong khai.
+- Upload thumbnail len Cloudinary.
 
-Noi cach khac, day la mot CMS mini cho trang tin tuc, ket hop giua phan hien thi noi dung cho nguoi doc va phan quan tri noi dung o backend.
+Noi ngan gon: day la mot modular monolith theo feature, huong toi bai tap lon/do an demo ve he thong quan tri noi dung tin tuc.
 
 ## Cong nghe su dung
 
 - Java 21
-- Spring Boot 4.0.5
+- Spring Boot 4.0.1
 - Spring MVC
 - Spring Data JPA
 - Spring Security
+- Spring Validation
 - Thymeleaf
+- Thymeleaf Extras Spring Security 6
 - MySQL
+- H2 cho test
 - Lombok
 - Bootstrap 5
 - CKEditor 5
+- Cloudinary
+
+## Kien truc hien tai
+
+Du an da duoc refactor theo huong chia theo feature:
+
+```text
+src/main/java/com/example/news
+|- article     # Bai viet, public flow, admin flow, author flow, editor workflow
+|- bootstrap   # Seed du lieu mau cho local/dev
+|- category    # Quan ly chuyen muc
+|- comment     # Comment va moderation
+|- common      # Exception, web, storage
+|- config      # Security, Cloudinary va cau hinh chung
+|- user        # Auth, profile, user management, principal, form
+```
+
+Thu muc giao dien:
+
+```text
+src/main/resources/templates
+|- admin       # Giao dien quan tri
+|- author      # Giao dien tac gia
+|- editor      # Giao dien bien tap
+|- auth        # Login / register
+|- user        # Profile
+|- fragments   # Shared backoffice shell
+|- error       # Trang loi
+```
+
+## Vai tro va quyen
+
+He thong hien co 4 role:
+
+- `ADMIN`: toan quyen, co the vao khu admin va dong thoi su dung cac workspace cua editor va author.
+- `EDITOR`: duyet bai viet, yeu cau sua, huy bai, duyet comment.
+- `AUTHOR`: tao bai viet, sua bai cua minh, gui bai di duyet, huy bai.
+- `USER`: su dung public site, dang ky/dang nhap, cap nhat profile.
+
+## Trang thai nghiep vu
+
+### Trang thai bai viet
+
+- `DRAFT`
+- `IN_REVIEW`
+- `CHANGES_REQUESTED`
+- `PUBLISHED`
+- `CANCELLED`
+
+### Trang thai comment
+
+- `PENDING`
+- `APPROVED`
+- `REJECTED`
+
+Quy tac hien tai:
+
+- Public site chi hien bai viet `PUBLISHED`.
+- Comment moi duoc gui se vao `PENDING`.
+- Chi comment `APPROVED` moi hien tren public site.
 
 ## Chuc nang hien co
 
 ### Public site
 
-- Trang chu hien thi danh sach bai viet co phan trang.
-- Xem chi tiet bai viet theo slug.
+- Trang chu co phan trang.
+- Tim kiem bai viet theo tu khoa.
 - Loc bai viet theo chuyen muc.
-- Tim kiem bai viet theo tieu de.
-- Gui binh luan tren trang chi tiet bai viet.
-- Hien thi danh sach chuyen muc trong thanh dieu huong.
+- Xem chi tiet bai viet theo slug.
+- Tang luot xem khi mo bai viet.
+- Gui comment tren bai viet da xuat ban.
+- Chi hien comment da duoc duyet.
 
-### Admin site
+### Auth va tai khoan
 
-- Dang nhap bang Spring Security form login mac dinh.
-- Dashboard quan ly danh sach bai viet.
-- Tao, sua, xoa bai viet.
-- Tao va sua chuyen muc.
-- Upload thumbnail cho bai viet.
-- Soan noi dung bai viet bang CKEditor.
+- Custom login page.
+- Dang ky tai khoan moi.
+- Redirect sau dang nhap theo role:
+  - `ADMIN -> /admin`
+  - `EDITOR -> /editor`
+  - `AUTHOR -> /author`
+  - `USER -> /`
+- Trang profile.
+- Cap nhat thong tin ca nhan.
+- Doi mat khau.
 
-## Tai khoan va du lieu mac dinh
+### Admin
 
-Khi ung dung chay lan dau, lop `DataSeeder` se tu dong tao du lieu mau neu database dang rong:
+- Quan ly bai viet.
+- Quan ly chuyen muc.
+- Quan ly user.
+- Tao/sua user va gan role.
+- Bat/tat trang thai user.
+- Admin co the di chuyen sang editor/author workspace tu shared sidebar.
 
-- Tai khoan admin:
-  - Username: `admin`
-  - Password: `123456`
-- Chuyen muc mau:
-  - `the-thao`
-  - `cong-nghe`
-  - `giai-tri`
-- Mot vai bai viet mau de kiem thu giao dien.
+### Author
 
-## Cau truc du an
+- Xem danh sach bai viet cua minh.
+- Tao bai viet moi.
+- Sua bai viet cua minh.
+- Luu bai o trang thai ban nhap.
+- Gui bai sang hang doi duyet.
+- Huy bai trong workflow.
 
-```text
-src/main/java/com/example/news
-|- component       # Seed du lieu mau khi khoi dong
-|- config          # Cau hinh bao mat
-|- controller      # Controller public va admin
-|- entity          # Article, Category, Comment, User, Role
-|- repository      # JPA Repository
-|- security        # UserDetailsService tuy bien
-|- service         # Tang nghiep vu
+### Editor
 
-src/main/resources
-|- static/uploads  # Anh upload
-|- templates       # Giao dien Thymeleaf
-   |- admin        # Giao dien quan tri
-```
+- Xem review queue.
+- Publish bai viet.
+- Yeu cau tac gia chinh sua.
+- Huy bai trong workflow.
+- Duyet va tu choi comment.
 
-## Luong chinh trong he thong
+### Giao dien va UI
 
-### 1. Public content flow
+- Shared backoffice layout cho `ADMIN`, `EDITOR`, `AUTHOR`.
+- Header/footer backoffice thong nhat.
+- Sidebar desktop co the collapse theo kieu icon rail.
+- Trang `profile` render theo role:
+  - `ADMIN/EDITOR/AUTHOR`: dung backoffice shell
+  - `USER`: dung account/public layout rieng
 
-- `HomeController` phuc vu trang chu va tim kiem.
-- `ArticleController` phuc vu trang chi tiet, loc theo chuyen muc va luu binh luan.
-- `ArticleService` va `ArticleRepository` xu ly truy van bai viet, phan trang va tim kiem.
+## Route quan trong
 
-### 2. Admin content flow
+### Public
 
-- `AdminController` xu ly dashboard, form bai viet, form chuyen muc va upload anh.
-- Bai viet duoc gan tac gia dua tren tai khoan dang dang nhap.
-- Anh thumbnail duoc luu vao `src/main/resources/static/uploads/`.
+- `/`
+- `/search?keyword=...`
+- `/category/{slug}`
+- `/article/{slug}`
+- `/article/comment`
 
-### 3. Security flow
+### Auth / account
 
-- `SecurityConfig` mo public cho cac trang doc tin va khoa toan bo `/admin/**` bang role `ADMIN`.
-- `CustomUserDetailsService` tai thong tin user tu database.
-- Password duoc ma hoa bang BCrypt.
+- `/login`
+- `/register`
+- `/profile`
+- `/profile/password`
 
-## Cau hinh database
+### Admin
 
-File cau hinh hien tai nam tai `src/main/resources/application.properties`:
+- `/admin`
+- `/admin/article/create`
+- `/admin/article/edit/{id}`
+- `/admin/categories`
+- `/admin/category/create`
+- `/admin/category/edit/{id}`
+- `/admin/users`
+- `/admin/user/create`
+- `/admin/user/edit/{id}`
+
+### Author
+
+- `/author`
+- `/author/article/create`
+- `/author/article/edit/{id}`
+- `/author/article/save`
+- `/author/article/submit/{id}`
+- `/author/article/cancel/{id}`
+
+### Editor
+
+- `/editor`
+- `/editor/article/review/{id}`
+- `/editor/article/publish/{id}`
+- `/editor/article/request-changes/{id}`
+- `/editor/article/cancel/{id}`
+- `/editor/comments`
+- `/editor/comment/approve/{id}`
+- `/editor/comment/reject/{id}`
+
+## Du lieu mau va profile chay local
+
+`DataSeeder` hien chi chay voi profile `dev` hoac `local`.
+
+Neu chay ung dung voi profile nay, he thong se seed:
+
+- Categories mau
+- User mau
+- Mot vai bai viet `PUBLISHED`
+
+Tai khoan mau:
+
+- `admin / 123456`
+- `editor / 123456`
+- `author / 123456`
+
+Neu ban chay khong co profile `dev` hoac `local`, du lieu mau se khong duoc tao.
+
+## Cau hinh database va Cloudinary
+
+Mac dinh du an dung MySQL:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/news_db?useSSL=false&serverTimezone=UTC
 spring.datasource.username=root
 spring.datasource.password=
 spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
 ```
 
-Ban can tao truoc database:
+Ban can tao DB truoc:
 
 ```sql
 CREATE DATABASE news_db;
 ```
 
-Sau do chinh lai `spring.datasource.username` va `spring.datasource.password` cho phu hop may cua ban.
+### Cloudinary
+
+Tinh nang upload thumbnail dang su dung Cloudinary thong qua `StorageService`.
+
+Cau hinh co the dat bang env vars:
+
+```powershell
+setx CLOUDINARY_CLOUD_NAME "your_cloud_name"
+setx CLOUDINARY_API_KEY "your_api_key"
+setx CLOUDINARY_API_SECRET "your_api_secret"
+```
+
+Luu y:
+
+- Khong nen commit secret that len repo.
+- File `src/main/resources/application.properties` dang duoc xu ly nhu local config tren may phat trien.
 
 ## Cach chay du an
 
-### Cach 1: dung Maven Wrapper
+### Chay bang Maven Wrapper
 
 Windows:
 
@@ -133,68 +268,70 @@ macOS/Linux:
 ./mvnw spring-boot:run
 ```
 
-### Cach 2: dung Maven da cai san
+### Chay voi du lieu mau
+
+Windows:
 
 ```bash
-mvn spring-boot:run
+mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-Neu `mvnw.cmd` tren Windows bao loi `Cannot start maven from wrapper`, ban co the:
+macOS/Linux:
 
-- Dung Maven da cai san trong may.
-- Hoac tao lai Maven Wrapper sau khi moi truong Maven da san sang.
+```bash
+./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+```
 
-Sau khi chay thanh cong, truy cap:
+Sau khi chay thanh cong:
 
-- Trang chu: `http://localhost:8080/`
-- Trang dang nhap: `http://localhost:8080/login`
-- Trang admin: `http://localhost:8080/admin`
+- Public site: `http://localhost:8080/`
+- Login: `http://localhost:8080/login`
+- Admin: `http://localhost:8080/admin`
+- Editor: `http://localhost:8080/editor`
+- Author: `http://localhost:8080/author`
 
-## Cac URL quan trong
+## Test
 
-- `/` : trang chu
-- `/search?keyword=...` : tim kiem bai viet
-- `/category/{slug}` : xem bai viet theo chuyen muc
-- `/article/{slug}` : xem chi tiet bai viet
-- `/admin` : dashboard quan tri
-- `/admin/article/create` : tao bai viet moi
-- `/admin/categories` : danh sach chuyen muc
+Codebase hien da co test cho:
+
+- Controller public va admin
+- Service article/category/comment/user
+- Security integration
+- Auth flow
+- Editorial workflow
+- Comment moderation
+
+Chay test:
+
+```bash
+mvnw.cmd test
+```
+
+Hoac:
+
+```bash
+mvn test
+```
 
 ## Hien trang codebase
 
-Day la nhung gi co the ket luan tu code hien tai:
+Nhung diem dang tot o thoi diem hien tai:
 
-- Kien truc da tach thanh cac tang kha ro rang: controller, service, repository, entity.
-- Du an da co du luong cho public site va admin site, phu hop voi bai tap lon/mini CMS.
-- Giao dien duoc cham chut kha ky, dac biet o trang chu, trang chi tiet va dashboard admin.
-- He thong comment da co luu du lieu, nhung chua co moderation.
-- Test hien tai moi o muc co ban voi `contextLoads()`.
+- Kien truc da tach theo feature, de doc va de mo rong hon kien truc layer cu.
+- Security va role-based UI da kha ro.
+- Workflow bien tap va moderation da du cho demo newsroom.
+- Backoffice dung chung shell, UX nhat quan hon truoc.
+- Da co bo test kha day du cho muc tieu do an/demo.
 
-## Nhung diem can hoan thien tiep
+Nhung diem co the phat trien tiep:
 
-- Bo sung test cho service, controller va repository.
-- Hoan thien quy trinh xuat ban/draft de public site chi hien thi bai viet mong muon.
-- Hoan thien bo dem luot xem bai viet.
-- Them giao dien tim kiem ro rang hon tren frontend.
-- Can nhac tach file CSS/JS rieng thay vi de nhieu style inline trong template.
-- Bo sung validation va xu ly loi than thien hon o form admin.
+- Tach CSS/JS rieng thay vi de nhieu inline style trong template.
+- Bo sung tim kiem/filter nang hon cho user, bai viet va comment.
+- Them lich su workflow hoac audit log.
+- Bo sung email/notification neu can day them demo.
+- Hoan thien quy trinh deploy va secret management ro rang hon.
 
-## Ghi chu thuc te khi tiep tuc phat trien
+## Ghi chu
 
-- Thu muc `target/` dang co trong workspace, nhung khong nen dua vao tai lieu thiet ke hay commit phu thuoc build output.
-- Anh upload hien dang luu thang trong `src/main/resources/static/uploads`, phu hop cho demo/noi bo, nhung ve lau dai nen tach sang storage rieng.
-- Form login hien tai la trang mac dinh cua Spring Security, chua co giao dien dang nhap tu thiet ke rieng.
-
-## Dinh huong phat trien phu hop
-
-Neu ban muon day du an nay len muc hoan chinh hon, huong di hop ly la:
-
-1. On dinh hoa CRUD bai viet/chuyen muc.
-2. Bo sung custom login page va quan ly user.
-3. Tach frontend resources ra file CSS/JS rieng.
-4. Them validation, exception handling va trang loi.
-5. Viet test va tai lieu API/noi bo day du hon.
-
----
-
-README nay duoc viet dua tren hien trang codebase thuc te trong repo o thoi diem hien tai, de phuc vu viec onboarding, bao cao do an va tiep tuc phat trien.
+- README nay duoc cap nhat theo codebase hien tai sau cac dot refactor, auth, user management, editorial workflow va backoffice UI refresh.
+- Neu README va local config cua ban khac nhau, uu tien xem code va profile dang chay thuc te tren may.

@@ -7,10 +7,10 @@
         <div class="card backoffice-card">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="m-0 text-primary">Article List</h5>
-                    <div class="small text-muted">Admin can jump into editorial and author workspaces from the shared sidebar.</div>
+                    <h5 class="m-0 text-primary">Danh sách bài viết</h5>
+                    <div class="small text-muted">Quản trị viên có thể chuyển nhanh sang khu vực biên tập và tác giả từ thanh điều hướng chung.</div>
                 </div>
-                <a th:href="@{/admin/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Article</a>
+                <a th:href="@{/admin/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tạo bài viết</a>
             </div>
 
             <div class="card-body p-0">
@@ -19,12 +19,12 @@
                         <thead>
                         <tr>
                             <th class="ps-3">ID</th>
-                            <th>Title</th>
-                            <th>Author</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Views</th>
-                            <th class="text-center">Actions</th>
+                            <th>Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Chuyên mục</th>
+                            <th>Trạng thái</th>
+                            <th>Lượt xem</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -32,28 +32,28 @@
                             <td class="ps-3 fw-bold text-secondary" th:text="${article.id}">1</td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <img th:if="${article.thumbnailUrl != null}" th:src="${article.thumbnailUrl}" class="rounded me-2" style="width: 44px; height: 44px; object-fit: cover;" alt="Thumbnail">
+                                    <img th:if="${article.thumbnailUrl != null}" th:src="${article.thumbnailUrl}" class="rounded me-2" style="width: 44px; height: 44px; object-fit: cover;" alt="Ảnh đại diện bài viết">
                                     <div>
-                                        <div class="fw-bold text-dark" th:text="${article.title}">Article title</div>
+                                        <div class="fw-bold text-dark" th:text="${article.title}">Tiêu đề bài viết</div>
                                         <small class="text-muted" th:text="${article.slug}">slug</small>
                                     </div>
                                 </div>
                             </td>
-                            <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Author</td>
-                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
+                            <td th:text="${article.author.fullName != null and !#strings.isEmpty(article.author.fullName) ? article.author.fullName : article.author.username}">Tác giả</td>
+                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Chuyên mục</span></td>
                             <td>
                                 <span class="badge"
                                       th:classappend="${article.status.name() == 'PUBLISHED' ? ' bg-success' : article.status.name() == 'IN_REVIEW' ? ' bg-primary' : article.status.name() == 'CHANGES_REQUESTED' ? ' bg-warning text-dark' : article.status.name() == 'CANCELLED' ? ' bg-danger' : ' bg-secondary'}"
-                                      th:text="${article.status.name()}">STATUS</span>
+                                      th:text="${article.status.displayName}">Trạng thái</span>
                             </td>
                             <td th:text="${article.views}">0</td>
                             <td class="text-center">
                                 <a th:href="@{/admin/article/edit/{id}(id=${article.id})}" class="btn btn-outline-primary btn-sm me-1"><i class="fas fa-edit"></i></a>
-                                <a th:href="@{/admin/article/delete/{id}(id=${article.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Delete this article?');"><i class="fas fa-trash-alt"></i></a>
+                                <a th:href="@{/admin/article/delete/{id}(id=${article.id})}" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc muốn xóa bài viết này?');"><i class="fas fa-trash-alt"></i></a>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(articles)}">
-                            <td colspan="7" class="text-center py-4 text-muted">No articles found.</td>
+                            <td colspan="7" class="text-center py-4 text-muted">Chưa có bài viết nào.</td>
                         </tr>
                         </tbody>
                     </table>

@@ -100,7 +100,7 @@ class ArticleWorkflowServiceTest {
 
         assertThatThrownBy(() -> articleWorkflowService.cancelByAuthor(4L, "alice"))
                 .isInstanceOf(InvalidOperationException.class)
-                .hasMessageContaining("cancelled by the author");
+                .hasMessageContaining("tác giả hủy");
     }
 
     private User author(String username) {

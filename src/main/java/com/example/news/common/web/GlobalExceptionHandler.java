@@ -15,17 +15,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ModelAndView handleNotFound(ResourceNotFoundException exception) {
-        return buildErrorPage(HttpStatus.NOT_FOUND, "Resource not found", exception.getMessage());
+        return buildErrorPage(HttpStatus.NOT_FOUND, "Không tìm thấy dữ liệu", exception.getMessage());
     }
 
     @ExceptionHandler(InvalidOperationException.class)
     public ModelAndView handleInvalidOperation(InvalidOperationException exception) {
-        return buildErrorPage(HttpStatus.BAD_REQUEST, "Invalid operation", exception.getMessage());
+        return buildErrorPage(HttpStatus.BAD_REQUEST, "Thao tác không hợp lệ", exception.getMessage());
     }
 
     @ExceptionHandler(StorageException.class)
     public ModelAndView handleStorage(StorageException exception) {
-        return buildErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "Storage error", exception.getMessage());
+        return buildErrorPage(HttpStatus.INTERNAL_SERVER_ERROR, "Lỗi lưu trữ", exception.getMessage());
     }
 
     private ModelAndView buildErrorPage(HttpStatus status, String title, String message) {

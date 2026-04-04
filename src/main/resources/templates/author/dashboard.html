@@ -7,38 +7,38 @@
         <div class="card backoffice-card">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-1">My Articles</h5>
-                    <div class="small text-muted">Visible statuses: draft, review, requested changes, published, cancelled.</div>
+                    <h5 class="mb-1">Bài viết của tôi</h5>
+                    <div class="small text-muted">Các trạng thái hiển thị: bản nháp, chờ duyệt, cần chỉnh sửa, đã xuất bản và đã hủy.</div>
                 </div>
-                <a th:href="@{/author/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>New Draft</a>
+                <a th:href="@{/author/article/create}" class="btn btn-primary btn-sm"><i class="fas fa-plus me-1"></i>Tạo bản nháp</a>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover mb-0 align-middle">
                         <thead>
                         <tr>
-                            <th class="ps-3">Title</th>
-                            <th>Category</th>
-                            <th>Status</th>
-                            <th>Review Note</th>
-                            <th class="text-center">Actions</th>
+                            <th class="ps-3">Tiêu đề</th>
+                            <th>Chuyên mục</th>
+                            <th>Trạng thái</th>
+                            <th>Ghi chú biên tập</th>
+                            <th class="text-center">Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="article : ${articles}">
                             <td class="ps-3">
-                                <div class="fw-bold" th:text="${article.title}">Article title</div>
+                                <div class="fw-bold" th:text="${article.title}">Tiêu đề bài viết</div>
                                 <small class="text-muted" th:text="${article.slug}">slug</small>
                             </td>
-                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Category</span></td>
+                            <td><span class="badge bg-info text-dark" th:text="${article.category.name}">Chuyên mục</span></td>
                             <td>
                                 <span class="badge"
                                       th:classappend="${article.status.name() == 'PUBLISHED' ? ' bg-success' : article.status.name() == 'IN_REVIEW' ? ' bg-primary' : article.status.name() == 'CHANGES_REQUESTED' ? ' bg-warning text-dark' : article.status.name() == 'CANCELLED' ? ' bg-danger' : ' bg-secondary'}"
-                                      th:text="${article.status.name()}">STATUS</span>
+                                      th:text="${article.status.displayName}">Trạng thái</span>
                             </td>
                             <td>
-                                <span th:if="${article.reviewNote != null and !#strings.isEmpty(article.reviewNote)}" th:text="${article.reviewNote}">Review note</span>
-                                <span th:if="${article.reviewNote == null or #strings.isEmpty(article.reviewNote)}" class="text-muted">No editorial note</span>
+                                <span th:if="${article.reviewNote != null and !#strings.isEmpty(article.reviewNote)}" th:text="${article.reviewNote}">Ghi chú</span>
+                                <span th:if="${article.reviewNote == null or #strings.isEmpty(article.reviewNote)}" class="text-muted">Chưa có ghi chú</span>
                             </td>
                             <td class="text-center">
                                 <a th:if="${article.status.name() == 'DRAFT' or article.status.name() == 'CHANGES_REQUESTED'}"
@@ -52,11 +52,11 @@
                                       th:action="@{/author/article/cancel/{id}(id=${article.id})}" method="post" class="d-inline">
                                     <button type="submit" class="btn btn-outline-danger btn-sm"><i class="fas fa-ban"></i></button>
                                 </form>
-                                <span th:if="${article.status.name() != 'DRAFT' and article.status.name() != 'CHANGES_REQUESTED'}" class="text-muted small">Locked</span>
+                                <span th:if="${article.status.name() != 'DRAFT' and article.status.name() != 'CHANGES_REQUESTED'}" class="text-muted small">Đã khóa</span>
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(articles)}">
-                            <td colspan="5" class="text-center py-4 text-muted">You do not have any articles yet.</td>
+                            <td colspan="5" class="text-center py-4 text-muted">Bạn chưa có bài viết nào.</td>
                         </tr>
                         </tbody>
                     </table>

@@ -38,27 +38,27 @@
 
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Latest</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/}">Mới nhất</a></li>
                 <li class="nav-item" th:each="cat : ${categories}">
-                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Category</a>
+                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Chuyên mục</a>
                 </li>
             </ul>
 
             <form class="d-flex me-3" th:action="@{/search}" method="get">
-                <input class="form-control form-control-sm" type="search" name="keyword" th:value="${keyword}" placeholder="Search title">
+                <input class="form-control form-control-sm" type="search" name="keyword" th:value="${keyword}" placeholder="Tìm theo tiêu đề">
             </form>
 
             <ul class="navbar-nav ms-auto align-items-lg-center">
                 <li class="nav-item auth-name me-2" sec:authorize="isAuthenticated()">
-                    <span sec:authentication="principal.displayName">User</span>
+                    <span sec:authentication="principal.displayName">Người dùng</span>
                 </li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}">Login</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Register</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Profile</a></li>
-                <li class="nav-item" sec:authorize="hasRole('AUTHOR')"><a class="nav-link text-danger fw-bold" th:href="@{/author}">Author</a></li>
-                <li class="nav-item" sec:authorize="hasRole('EDITOR')"><a class="nav-link text-danger fw-bold" th:href="@{/editor}">Editor</a></li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Admin</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Logout</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}">Đăng nhập</a></li>
+                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Đăng ký</a></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Hồ sơ</a></li>
+                <li class="nav-item" sec:authorize="hasRole('AUTHOR')"><a class="nav-link text-danger fw-bold" th:href="@{/author}">Tác giả</a></li>
+                <li class="nav-item" sec:authorize="hasRole('EDITOR')"><a class="nav-link text-danger fw-bold" th:href="@{/editor}">Biên tập</a></li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị</a></li>
+                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a></li>
             </ul>
         </div>
     </div>
@@ -67,22 +67,22 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 border-end pe-lg-4">
-            <div class="alert alert-info" th:if="${keyword != null}" th:text="'Search results for: ' + ${keyword}"></div>
+            <div class="alert alert-info" th:if="${keyword != null}" th:text="'Kết quả tìm kiếm cho: ' + ${keyword}"></div>
 
             <div th:if="${not #lists.isEmpty(articles)}" class="mb-5">
                 <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="thumb-wrapper mb-3">
-                    <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}" class="img-lead" alt="Thumbnail">
+                    <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}" class="img-lead" alt="Ảnh minh họa">
                 </a>
-                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Featured title</a>
-                <p class="news-summary" th:text="${articles[0].summary}">Summary</p>
+                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Tiêu đề nổi bật</a>
+                <p class="news-summary" th:text="${articles[0].summary}">Tóm tắt</p>
                 <div class="text-muted small mt-2">
-                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold">Category</span> -
-                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}">Date</span>
+                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold">Chuyên mục</span> -
+                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}">Ngày</span>
                 </div>
             </div>
 
             <div th:if="${#lists.isEmpty(articles)}" class="text-center text-muted py-5">
-                No published articles found.
+                Không có bài viết đã xuất bản.
             </div>
 
             <hr class="mb-4" th:if="${not #lists.isEmpty(articles)}">
@@ -90,51 +90,51 @@
             <div th:each="article, iter : ${articles}" th:if="${iter.index > 0}" class="row mb-4 pb-4 border-bottom">
                 <div class="col-md-4 col-5">
                     <a th:href="@{/article/{slug}(slug=${article.slug})}" class="thumb-wrapper">
-                        <img th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}" class="img-sub" alt="Thumbnail">
+                        <img th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}" class="img-sub" alt="Ảnh minh họa">
                     </a>
                 </div>
                 <div class="col-md-8 col-7">
-                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Article title</a>
-                    <p class="news-summary d-none d-md-block" th:text="${article.summary}">Summary</p>
+                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Tiêu đề bài viết</a>
+                    <p class="news-summary d-none d-md-block" th:text="${article.summary}">Tóm tắt</p>
                     <div class="text-muted small mt-2">
-                        <span th:text="${article.category.name}" class="text-danger fw-bold">Category</span>
+                        <span th:text="${article.category.name}" class="text-danger fw-bold">Chuyên mục</span>
                     </div>
                 </div>
             </div>
 
             <div th:if="${totalPages > 1}" class="pagination-box text-center mt-5 mb-5">
                 <a th:if="${currentPage > 0 and currentCategorySlug != null}"
-                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})}">&laquo; Previous</a>
+                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})}">&laquo; Trước</a>
                 <a th:if="${currentPage > 0 and keyword != null}"
-                   th:href="@{/search(keyword=${keyword}, page=${currentPage - 1})}">&laquo; Previous</a>
+                   th:href="@{/search(keyword=${keyword}, page=${currentPage - 1})}">&laquo; Trước</a>
                 <a th:if="${currentPage > 0 and currentCategorySlug == null and keyword == null}"
-                   th:href="@{/(page=${currentPage - 1})}">&laquo; Previous</a>
+                   th:href="@{/(page=${currentPage - 1})}">&laquo; Trước</a>
 
-                <span class="mx-3 fw-bold text-muted" th:text="'Page ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Page</span>
+                <span class="mx-3 fw-bold text-muted" th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Trang</span>
 
                 <a th:if="${currentPage < totalPages - 1 and currentCategorySlug != null}"
-                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})}">Next &raquo;</a>
+                   th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})}">Sau &raquo;</a>
                 <a th:if="${currentPage < totalPages - 1 and keyword != null}"
-                   th:href="@{/search(keyword=${keyword}, page=${currentPage + 1})}">Next &raquo;</a>
+                   th:href="@{/search(keyword=${keyword}, page=${currentPage + 1})}">Sau &raquo;</a>
                 <a th:if="${currentPage < totalPages - 1 and currentCategorySlug == null and keyword == null}"
-                   th:href="@{/(page=${currentPage + 1})}">Next &raquo;</a>
+                   th:href="@{/(page=${currentPage + 1})}">Sau &raquo;</a>
             </div>
         </div>
 
         <div class="col-lg-4 ps-lg-4 mt-4 mt-lg-0">
-            <h5 class="sidebar-heading">Most viewed</h5>
+            <h5 class="sidebar-heading">Xem nhiều</h5>
             <div class="mt-3">
                 <div th:each="article, iter : ${articles}" th:if="${iter.index < 6}" class="sidebar-item d-flex align-items-start">
                     <span class="rank-number" th:text="${iter.index + 1}">1</span>
                     <div>
-                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Popular title</a>
-                        <div class="text-muted small mt-1"><span th:text="${article.views}">0</span> views</div>
+                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Tiêu đề nổi bật</a>
+                        <div class="text-muted small mt-1"><span th:text="${article.views}">0</span> lượt xem</div>
                     </div>
                 </div>
             </div>
 
             <div class="mt-5 text-center bg-light p-4 border rounded">
-                <span class="text-muted small d-block mb-2">Advertisement</span>
+                <span class="text-muted small d-block mb-2">Quảng cáo</span>
                 <img src="https://via.placeholder.com/300x250?text=Ad+Banner" class="img-fluid rounded" alt="Ads">
             </div>
         </div>
