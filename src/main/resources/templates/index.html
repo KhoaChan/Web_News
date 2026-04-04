@@ -25,6 +25,18 @@
         }
         .nav-link:hover { color: #9f224e !important; border-bottom: 3px solid #9f224e; }
 
+        /* CSS cho Avatar người dùng */
+        .user-avatar {
+            width: 35px; height: 35px;
+            background-color: #e2e2e2;
+            color: #fff;
+            font-weight: 900; font-size: 1.2rem;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .dropdown-item { padding: 10px 20px; font-size: 0.95rem; }
+        .dropdown-item:hover { background-color: #f8f9fa; }
+
         .news-title { 
             font-family: 'Playfair Display', serif; 
             font-weight: 700; color: #222; text-decoration: none; 
@@ -97,14 +109,38 @@
             </form>
 
             <ul class="navbar-nav">
+                
                 <li class="nav-item" sec:authorize="isAnonymous()">
                     <a class="nav-link text-primary fw-bold" th:href="@{/login}"><i class="fas fa-user-circle"></i> Đăng nhập</a>
                 </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link text-danger fw-bold" th:href="@{/admin}"><i class="fas fa-cog"></i> Quản trị</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link text-muted" th:href="@{/logout}"><i class="fas fa-sign-out-alt"></i> Thoát</a>
+                
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-transform: none; border: none; padding: 5px 10px !important;">
+                        <div class="user-avatar text-uppercase me-2" th:text="${#authentication.name.substring(0,1)}">U</div>
+                        <span class="fw-bold text-dark" sec:authentication="name">Username</span>
+                    </a>
+                    
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="userDropdown">
+                        
+                        <li sec:authorize="hasAuthority('ROLE_ADMIN')">
+                            <a class="dropdown-item text-danger fw-bold" th:href="@{/admin}"><i class="fas fa-cogs me-2"></i> Bảng điều khiển Admin</a>
+                        </li>
+
+                        <li sec:authorize="hasAuthority('ROLE_AUTHOR')">
+                            <a class="dropdown-item text-success fw-bold" th:href="@{/author/write}"><i class="fas fa-pen-nib me-2"></i> Viết bài mới</a>
+                        </li>
+                        
+                        <li sec:authorize="hasAnyAuthority('ROLE_ADMIN', 'ROLE_AUTHOR')"><hr class="dropdown-divider"></li>
+
+                        <li><a class="dropdown-item text-dark" th:href="@{/profile}">Thông tin chung</a></li>
+                        <li><a class="dropdown-item text-dark" th:href="@{/profile/comments}">Ý kiến của bạn</a></li>
+                        <li><a class="dropdown-item text-dark" th:href="@{/profile/saved}">Tin đã lưu</a></li>
+                        <li><a class="dropdown-item text-dark" th:href="@{/profile/history}">Tin đã xem</a></li>
+                        
+                        <li><hr class="dropdown-divider"></li>
+                        
+                        <li><a class="dropdown-item text-muted" th:href="@{/logout}">Thoát <i class="fas fa-sign-out-alt ms-1 text-secondary"></i></a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -174,6 +210,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const searchInput = document.getElementById('search-input');
     const resultBox = document.getElementById('search-results');

@@ -9,7 +9,12 @@ public interface ArticleService {
     Page<Article> findAll(int page, int size);
 
     Page<Article> search(String keyword, int page, int size);
-    Page<Article> findByCategory(String slug, int page, int size);
+    
+    Page<Article> findByCategoryAndStatus(String slug, String status, int page, int size);
+
+    Page<Article> findByStatus(String status, int page, int size);
+    
+    Page<Article> searchByStatus(String keyword, String status, int page, int size);
     
     Article findBySlug(String slug);
 

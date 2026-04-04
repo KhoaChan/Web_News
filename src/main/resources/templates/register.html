@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký thành viên - VnExpress</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; display: flex; align-items: center; justify-content: center; height: 100vh; }
+        .auth-card { width: 100%; max-width: 400px; padding: 40px; border: none; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        .brand-text { color: #9f224e; font-family: serif; font-weight: bold; font-size: 2.5rem; text-align: center; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+<div class="card auth-card">
+    <a th:href="@{/}" class="text-decoration-none"><div class="brand-text">VnExpress</div></a>
+    <h5 class="text-center fw-bold mb-4">Tạo tài khoản mới</h5>
+
+    <div th:if="${error}" class="alert alert-danger small text-center" th:text="${error}"></div>
+
+    <form th:action="@{/register}" method="post">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Email</label>
+            <input type="email" name="email" class="form-control" required placeholder="Nhập địa chỉ email...">
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label fw-bold">Tên đăng nhập</label>
+            <input type="text" name="username" class="form-control" required placeholder="Tạo tên tài khoản...">
+        </div>
+        <div class="mb-4">
+            <label class="form-label fw-bold">Mật khẩu</label>
+            <input type="password" name="password" class="form-control" required placeholder="Tạo mật khẩu...">
+        </div>
+        <button type="submit" class="btn btn-dark w-100 fw-bold">Đăng ký thành viên</button>
+    </form>
+    
+    <div class="text-center mt-4 small">
+        Đã có tài khoản? <a th:href="@{/login}" class="text-primary fw-bold text-decoration-none">Đăng nhập</a>
+    </div>
+</div>
+
+</body>
+</html>

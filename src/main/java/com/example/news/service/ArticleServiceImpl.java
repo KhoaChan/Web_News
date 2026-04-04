@@ -34,9 +34,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Page<Article> findByCategory(String slug, int page, int size) {
+    public Page<Article> findByCategoryAndStatus(String slug, String status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return articleRepository.findByCategorySlugAndStatus(slug, "PUBLISHED", pageable);
+        return articleRepository.findByCategorySlugAndStatus(slug, status, pageable);
     }
 
     @Override
@@ -73,5 +73,17 @@ public class ArticleServiceImpl implements ArticleService {
         comment.setArticle(article);
         
         commentRepository.save(comment); 
+    }
+
+    @Override
+    public Page<Article> findByStatus(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return articleRepository.findByStatus(status, pageable);
+    }
+
+    @Override
+    public Page<Article> searchByStatus(String keyword, String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        return articleRepository.findByTitleContainingIgnoreCaseAndStatus(keyword, status, pageable);
     }
 }

@@ -20,7 +20,8 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model, @RequestParam(defaultValue = "0") int page) {
         int pageSize = 5;
-        var articlePage = articleService.findAll(page, pageSize);
+        // 🔥 ĐÃ ĐỔI: Dùng hàm findByStatus để ép chỉ lấy bài Đã xuất bản
+        var articlePage = articleService.findByStatus("PUBLISHED", page, pageSize);
         
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("articles", articlePage.getContent());
@@ -34,7 +35,8 @@ public class HomeController {
                          @RequestParam("keyword") String keyword,
                          @RequestParam(defaultValue = "0") int page) {
         int pageSize = 5;
-        var articlePage = articleService.search(keyword, page, pageSize);
+        // 🔥 ĐÃ ĐỔI: Thêm màng lọc status vào tính năng tìm kiếm
+        var articlePage = articleService.searchByStatus(keyword, "PUBLISHED", page, pageSize);
         
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("articles", articlePage.getContent());

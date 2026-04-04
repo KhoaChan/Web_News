@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.news.entity.Article;
 import com.example.news.entity.User;
+import com.example.news.repository.ArticleRepository;
 import com.example.news.repository.UserRepository;
 import com.example.news.service.ArticleService;
 import com.example.news.service.CategoryService;
@@ -31,6 +32,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final UserRepository userRepository;
     private final FileUploadService fileUploadService;
+    private final ArticleRepository articleRepository;
 
     @GetMapping
     public String dashboard(Model model) {
@@ -122,5 +124,19 @@ public String saveArticle(@ModelAttribute("article") Article formArticle,
     public String saveCategory(@ModelAttribute("category") com.example.news.entity.Category category) {
         categoryService.save(category);
         return "redirect:/admin/categories";
+    }
+    
+    @GetMapping("/approve-articles")
+    public String listPendingArticles(Model model) {
+        model.addAttribute("pendingArticles", articleRepository.findByStatusOrderByIdDesc("PENDING"));
+        return "admin/article-approve";
+    }
+
+    @PostMapping("/approve-articles/{id}")
+    public String approveArticle(@PathVariable Long id) {
+        Article article = articleRepository.findById(id).orElseThrow();
+        article.setStatus("PUBLISHED"); 
+        articleRepository.save(article);
+        return "redirect:/admin/approve-articles";
     }
 }

@@ -17,23 +17,31 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+@Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())          
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/category/**", "/article/**", "/search", "/css/**", "/images/**", "/uploads/**", "/error").permitAll()
+                // Các đường dẫn ai cũng vào được (Khách vãng lai)
+                .requestMatchers("/", "/category/**", "/article/**", "/search", "/api/search", "/register", "/css/**", "/images/**", "/error").permitAll()
                 
-                .requestMatchers("/admin/**").hasRole("ADMIN")
+                // Cấp 3: Admin
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                
+                // Cấp 1, 2, 3: Phải đăng nhập mới được gửi bình luận
+                .requestMatchers("/article/comment").authenticated()
+
+                // Chỉ Author mới được vào trang Phóng viên
+                .requestMatchers("/author/**").hasAuthority("ROLE_AUTHOR")
                 
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
+                .loginPage("/login")
+                .defaultSuccessUrl("/", false)
                 .permitAll()
-                .defaultSuccessUrl("/admin") 
             )
             .logout(logout -> logout
-                .logoutUrl("/logout")
                 .logoutSuccessUrl("/")
                 .permitAll()
             );

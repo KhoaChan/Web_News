@@ -23,8 +23,16 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     Page<Article> findByCategorySlugAndStatus(String slug, String status, Pageable pageable);
 
-    List<Article> findTop3ByCategoryIdAndIdNotOrderByCreatedAtDesc(Long categoryId, Long articleId);
+    List<Article> findTop3ByCategoryIdAndIdNotOrderByCreatedAtDesc(Long categoryId, String status ,Long articleId);
 
     List<Article> findTop5ByTitleContainingIgnoreCaseAndStatus(String title, String status);
+    
+    List<Article> findByStatusOrderByIdDesc(String status);
+
+    List<Article> findTop3ByCategoryIdAndStatusAndIdNotOrderByCreatedAtDesc(Long categoryId, String status, Long articleId);
+
+    // Dành cho Trang chủ (Có phân trang)
+    Page<Article> findByStatus(String status, Pageable pageable);
+
     
 }
