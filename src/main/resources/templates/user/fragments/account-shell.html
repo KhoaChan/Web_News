@@ -1,0 +1,220 @@
+<div xmlns:th="http://www.thymeleaf.org" th:fragment="shell(activeKey, content)">
+    <style>
+        .reader-account-shell { max-width: 1280px; margin: 0 auto; }
+        .reader-account-card,
+        .reader-account-panel,
+        .reader-support-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        }
+
+        .reader-profile-avatar {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .reader-profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .reader-account-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .reader-account-menu li + li {
+            border-top: 1px solid #eef2f7;
+        }
+
+        .reader-account-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            text-decoration: none;
+            color: #334155;
+            padding: 14px 18px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .reader-account-link:hover,
+        .reader-account-link.active {
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .reader-account-link.text-danger:hover {
+            color: #dc2626;
+        }
+
+        .reader-account-body {
+            min-height: 560px;
+        }
+
+        .reader-section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .reader-section-subtitle {
+            color: #64748b;
+            margin-bottom: 32px;
+        }
+
+        .reader-data-row {
+            display: grid;
+            grid-template-columns: minmax(160px, 220px) 1fr auto;
+            gap: 16px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e5e7eb;
+            align-items: center;
+        }
+
+        .reader-data-row:last-child {
+            border-bottom: none;
+        }
+
+        .reader-article-row {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            border-bottom: 1px solid #eef2f7;
+            padding: 18px 0;
+        }
+
+        .reader-article-row:last-child {
+            border-bottom: none;
+        }
+
+        .reader-article-title {
+            color: #0f172a;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .reader-empty {
+            border: 1px dashed #dbe3ee;
+            border-radius: 18px;
+            padding: 48px 24px;
+            text-align: center;
+            color: #64748b;
+            background: #f8fafc;
+        }
+
+        .reader-avatar-preview {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-weight: 800;
+            font-size: 1.6rem;
+        }
+
+        .reader-avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (max-width: 991.98px) {
+            .reader-data-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="container py-4 reader-account-shell">
+        <div class="row g-4">
+            <div class="col-lg-3">
+                <div class="reader-account-card p-3 mb-3">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="reader-profile-avatar">
+                            <img th:if="${currentUser.avatarUrl != null and !#strings.isEmpty(currentUser.avatarUrl)}"
+                                 th:src="${currentUser.avatarUrl}" alt="Ảnh đại diện">
+                            <span th:if="${currentUser.avatarUrl == null or #strings.isEmpty(currentUser.avatarUrl)}"
+                                  th:text="${#strings.substring(currentUser.fullName != null and !#strings.isEmpty(currentUser.fullName) ? currentUser.fullName : currentUser.username, 0, 1)}">N</span>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-5"
+                                 th:text="${currentUser.fullName != null and !#strings.isEmpty(currentUser.fullName) ? currentUser.fullName : currentUser.username}">
+                                Người dùng
+                            </div>
+                            <div class="text-muted small"
+                                 th:text="'Tham gia từ ' + ${#temporals.format(currentUser.createdAt, 'MM/yyyy')}">Tham gia từ 04/2026</div>
+                        </div>
+                    </div>
+
+                    <ul class="reader-account-menu">
+                        <li>
+                            <a class="reader-account-link" th:classappend="${activeKey == 'profile'} ? ' active'" th:href="@{/profile}">
+                                <span>Thông tin chung</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="reader-account-link" th:classappend="${activeKey == 'comments'} ? ' active'" th:href="@{/profile/comments}">
+                                <span>Ý kiến của bạn</span>
+                                <span class="text-muted small" th:text="'(' + ${accountCommentCount} + ')'">(0)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="reader-account-link" th:classappend="${activeKey == 'saved'} ? ' active'" th:href="@{/profile/saved}">
+                                <span>Tin đã lưu</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="reader-account-link" th:classappend="${activeKey == 'viewed'} ? ' active'" th:href="@{/profile/viewed}">
+                                <span>Tin đã xem</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="reader-account-link text-danger" th:href="@{/logout}">
+                                <span>Thoát</span>
+                                <i class="fas fa-arrow-right-from-bracket"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="reader-support-card p-3 text-muted">
+                    <div class="mb-2">Cần hỗ trợ, vui lòng liên hệ:</div>
+                    <a href="mailto:support@news.vn" class="text-decoration-none">support@news.vn</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <div class="reader-account-panel p-4 p-lg-5 reader-account-body">
+                    <div class="alert alert-success" th:if="${successMessage}" th:text="${successMessage}"></div>
+                    <div class="alert alert-danger" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+                    <h1 class="reader-section-title" th:text="${sectionTitle}">Thông tin tài khoản</h1>
+                    <p class="reader-section-subtitle">Quản lý thông tin cá nhân và lịch sử hoạt động của bạn trên News.</p>
+
+                    <th:block th:replace="${content}"></th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

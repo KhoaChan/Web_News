@@ -1,9 +1,11 @@
 package com.example.news.user.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.example.news.article.entity.Article;
+import com.example.news.comment.entity.Comment;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,6 +47,16 @@ public class User {
     @Column(name = "full_name", length = 150)
     private String fullName;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20)
+    private Gender gender;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role = Role.USER;
@@ -60,6 +72,15 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Article> articles;
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<SavedArticle> savedArticles;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<ViewedArticle> viewedArticles;
 
     @PreUpdate
     protected void onUpdate() {

@@ -1,5 +1,9 @@
 package com.example.news.user.web;
 
+import java.time.LocalDate;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,4 +20,9 @@ public class UserProfileForm {
 
     @Size(max = 150, message = "Họ và tên tối đa 150 ký tự")
     private String fullName;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthDate;
+
+    private String gender;
 }

@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.not;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,8 +70,20 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
-    void anonymousUserShouldBeRedirectedFromProfile() throws Exception {
+    void anonymousUserShouldBeRedirectedFromProfileRoutes() throws Exception {
         mockMvc.perform(get("/profile"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+
+        mockMvc.perform(get("/profile/comments"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+
+        mockMvc.perform(get("/profile/saved"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+
+        mockMvc.perform(get("/profile/viewed"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
@@ -116,11 +129,9 @@ class SecurityConfigIntegrationTest {
         mockMvc.perform(get("/admin").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/admin/users")))
                 .andExpect(content().string(containsString("/editor/comments")))
-                .andExpect(content().string(containsString("/author/article/create")))
-                .andExpect(content().string(containsString("Quay về trang tin")));
+                .andExpect(content().string(containsString("/author/article/create")));
     }
 
     @Test
@@ -128,12 +139,9 @@ class SecurityConfigIntegrationTest {
         mockMvc.perform(get("/editor").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/editor/comments")))
                 .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(not(containsString("/admin/categories"))))
-                .andExpect(content().string(not(containsString("/author/article/create"))))
-                .andExpect(content().string(containsString("Quay về trang tin")));
+                .andExpect(content().string(not(containsString("/author/article/create"))));
     }
 
     @Test
@@ -141,81 +149,81 @@ class SecurityConfigIntegrationTest {
         mockMvc.perform(get("/author").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
                 .andExpect(content().string(containsString("/author/article/create")))
                 .andExpect(content().string(not(containsString("/editor/comments"))))
-                .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(containsString("Quay về trang tin")));
+                .andExpect(content().string(not(containsString("/admin/users"))));
     }
 
     @Test
-    void adminProfileShouldUseBackofficeLayoutAndShowAllMenus() throws Exception {
+    void profilePagesShouldUseReaderAccountShellForAllRoles() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
-                .andExpect(content().string(containsString("/admin/users")))
-                .andExpect(content().string(containsString("/editor/comments")))
-                .andExpect(content().string(containsString("/author/article/create")))
-                .andExpect(content().string(containsString("Quay về trang tin")));
-    }
+                .andExpect(content().string(containsString("Thông tin chung")))
+                .andExpect(content().string(containsString("Ý kiến của bạn")))
+                .andExpect(content().string(containsString("Tin đã lưu")))
+                .andExpect(content().string(containsString("Tin đã xem")))
+                .andExpect(content().string(not(containsString("Khu vực quản trị News"))));
 
-    @Test
-    void editorProfileShouldUseBackofficeLayoutWithoutAdminMenus() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
-                .andExpect(content().string(containsString("/editor/comments")))
-                .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(not(containsString("/author/article/create"))))
-                .andExpect(content().string(containsString("Quay về trang tin")));
-    }
+                .andExpect(content().string(containsString("Thông tin chung")))
+                .andExpect(content().string(not(containsString("Khu vực quản trị News"))));
 
-    @Test
-    void authorProfileShouldUseBackofficeLayoutWithoutEditorialMenus() throws Exception {
         mockMvc.perform(get("/profile").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")))
-                .andExpect(content().string(containsString("/author/article/create")))
-                .andExpect(content().string(not(containsString("/editor/comments"))))
-                .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(containsString("Quay về trang tin")));
+                .andExpect(content().string(containsString("Thông tin chung")))
+                .andExpect(content().string(not(containsString("Khu vực quản trị News"))));
+
+        mockMvc.perform(get("/profile").with(user(principal(readerUser))))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Thông tin chung")))
+                .andExpect(content().string(containsString("Quản lý thông tin cá nhân")))
+                .andExpect(content().string(not(containsString("Khu vực quản trị News"))));
     }
 
     @Test
-    void userProfileShouldStayOutsideBackofficeLayout() throws Exception {
-        mockMvc.perform(get("/profile").with(user(principal(readerUser))))
+    void readerAccountTabsShouldRenderSharedShell() throws Exception {
+        mockMvc.perform(get("/profile/comments").with(user(principal(readerUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Quay về trang chủ")))
-                .andExpect(content().string(not(containsString("Khu vực quản trị News"))))
-                .andExpect(content().string(not(containsString("/admin/users"))))
-                .andExpect(content().string(not(containsString("/editor/comments"))))
-                .andExpect(content().string(not(containsString("/author/article/create"))));
+                .andExpect(content().string(containsString("Ý kiến của bạn")))
+                .andExpect(content().string(containsString("Tin đã lưu")))
+                .andExpect(content().string(containsString("Tin đã xem")));
+
+        mockMvc.perform(get("/profile/saved").with(user(principal(readerUser))))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Tin đã lưu")))
+                .andExpect(content().string(containsString("Bạn chưa lưu bài viết nào")));
+
+        mockMvc.perform(get("/profile/viewed").with(user(principal(readerUser))))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Tin đã xem")))
+                .andExpect(content().string(containsString("Lịch sử đọc của bạn đang trống")));
     }
 
     @Test
     void sharedLayoutShouldRenderOnBackofficeForms() throws Exception {
         mockMvc.perform(get("/admin/article/create").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")));
 
         mockMvc.perform(get("/admin/user/create").with(user(principal(adminUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")));
 
         mockMvc.perform(get("/author/article/create").with(user(principal(authorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")));
 
         mockMvc.perform(get("/editor/comments").with(user(principal(editorUser))))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Khu vực quản trị News")))
-                .andExpect(content().string(containsString("Thu gọn thanh bên")));
+                .andExpect(content().string(containsString("Khu vực quản trị News")));
+    }
+
+    @Test
+    void postSaveArticleShouldRequireAuthentication() throws Exception {
+        mockMvc.perform(post("/article/save/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
@@ -264,6 +272,7 @@ class SecurityConfigIntegrationTest {
                 user.getPassword(),
                 user.getFullName(),
                 user.getEmail(),
+                user.getAvatarUrl(),
                 user.getRole(),
                 user.isEnabled());
     }

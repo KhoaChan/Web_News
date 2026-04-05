@@ -21,6 +21,7 @@ public class NewsUserPrincipal implements UserDetails {
     private final String password;
     private final String fullName;
     private final String email;
+    private final String avatarUrl;
     private final Role role;
     private final boolean enabled;
 

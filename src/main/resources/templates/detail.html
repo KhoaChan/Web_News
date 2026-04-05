@@ -2,53 +2,91 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title th:text="${article.title} + ' - News'">Chi tiết bài viết</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #fff; font-family: 'Roboto', sans-serif; color: #222; }
-        .navbar { border-bottom: 1px solid #e5e5e5; padding: 0; }
-        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
-        .nav-link { font-weight: 500; text-transform: uppercase; font-size: 0.85rem; padding: 15px 20px !important; color: #333 !important; }
         .article-container { max-width: 800px; margin: 0 auto; padding-top: 30px; }
-        .article-title { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; line-height: 1.3; color: #222; margin-bottom: 15px; }
-        .article-summary { font-size: 1.15rem; font-weight: 700; line-height: 1.6; color: #444; margin-bottom: 20px; }
-        .article-meta { font-size: 0.9rem; color: #777; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 25px; }
+        .article-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #222;
+            margin-bottom: 15px;
+        }
+        .article-summary {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.6;
+            color: #444;
+            margin-bottom: 20px;
+        }
+        .article-meta {
+            font-size: 0.9rem;
+            color: #777;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
         .article-content { font-size: 1.15rem; line-height: 1.8; color: #333; }
-        .article-content img { max-width: 100%; height: auto; border-radius: 4px; margin: 20px 0; display: block; }
-        .comment-section-title { font-weight: 700; font-size: 1.2rem; color: #9f224e; border-bottom: 2px solid #9f224e; padding-bottom: 10px; display: inline-block; margin-bottom: 20px; }
+        .article-content img { max-width: 100%; height: auto; border-radius: 12px; display: block; margin: 0 auto; }
+        .article-content figure.image { margin: 1.75rem auto; max-width: 100%; }
+        .article-content figure.image figcaption {
+            margin-top: 0.65rem;
+            font-size: 0.92rem;
+            color: #64748b;
+            text-align: center;
+        }
+        .article-content figure.image-style-side {
+            max-width: 45%;
+            float: right;
+            margin: 0 0 1rem 1.5rem;
+        }
+        .article-content iframe,
+        .article-content video {
+            width: 100%;
+            min-height: 420px;
+            border: 0;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+        .article-content table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+        .article-content th,
+        .article-content td {
+            border: 1px solid #dbe3ee;
+            padding: 10px 12px;
+        }
+        .article-actions {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .comment-section-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #9f224e;
+            border-bottom: 2px solid #9f224e;
+            padding-bottom: 10px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
         .comment-box { background: #fcfcfc; padding: 25px; border-radius: 8px; border: 1px solid #eee; }
         .user-avatar { font-size: 2.5rem; color: #ccc; }
-        .auth-name { font-size: 0.82rem; color: #666; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">News</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Mới nhất</a></li>
-                <li class="nav-item" th:each="cat : ${categories}">
-                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Chuyên mục</a>
-                </li>
-            </ul>
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item auth-name me-2" sec:authorize="isAuthenticated()">
-                    <span sec:authentication="principal.displayName">Người dùng</span>
-                </li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}"><i class="fas fa-user-circle"></i> Đăng nhập</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Đăng ký</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Hồ sơ</a></li>
-                <li class="nav-item" sec:authorize="hasRole('AUTHOR')"><a class="nav-link text-danger fw-bold" th:href="@{/author}">Tác giả</a></li>
-                <li class="nav-item" sec:authorize="hasRole('EDITOR')"><a class="nav-link text-danger fw-bold" th:href="@{/editor}">Biên tập</a></li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/public-header :: siteHeader(${categories}, ${null})}"></nav>
 
 <div class="container mb-5 article-container">
     <nav aria-label="breadcrumb" class="mb-3">
@@ -65,7 +103,7 @@
     <h1 class="article-title" th:text="${article.title}">Tiêu đề bài viết</h1>
     <p class="article-summary" th:text="${article.summary}">Tóm tắt</p>
 
-    <div class="article-meta d-flex justify-content-between align-items-center">
+    <div class="article-meta d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div>
             <span class="fw-bold text-dark me-3" th:if="${article.author != null}">
                 <i class="fas fa-pen-nib"></i>
@@ -76,7 +114,16 @@
         <div><i class="fas fa-eye"></i> <strong th:text="${article.views}">0</strong> lượt xem</div>
     </div>
 
-    <div class="article-content" th:utext="${article.content}"></div>
+    <div class="article-actions">
+        <form sec:authorize="isAuthenticated()" th:action="@{/article/save/{id}(id=${article.id})}" method="post" class="m-0">
+            <input type="hidden" name="redirectTo" th:value="@{/article/{slug}(slug=${article.slug})}">
+            <button type="submit" class="btn" th:classappend="${savedArticle} ? 'btn-outline-secondary' : 'btn-danger'"
+                    th:text="${savedArticle} ? 'Bỏ lưu bài viết' : 'Lưu bài viết'">Lưu bài viết</button>
+        </form>
+        <a sec:authorize="isAnonymous()" class="btn btn-outline-primary" th:href="@{/login}">Đăng nhập để lưu bài viết</a>
+    </div>
+
+    <div class="article-content clearfix" th:utext="${article.content}"></div>
 
     <div class="mt-5 pt-4">
         <h4 class="comment-section-title">Bình luận (<span th:text="${approvedCommentCount}">0</span>)</h4>
@@ -85,14 +132,24 @@
             <h5 class="mb-3 fw-bold fs-6">Chia sẻ suy nghĩ của bạn</h5>
             <form th:action="@{/article/comment}" th:object="${commentForm}" method="post">
                 <input type="hidden" th:field="*{articleId}">
-                <div class="row">
+
+                <div sec:authorize="isAuthenticated()" class="small text-muted mb-3">
+                    Bạn đang bình luận với tên
+                    <strong th:text="${commentForm.name}">Người dùng</strong>.
+                </div>
+                <input sec:authorize="isAuthenticated()" type="hidden" th:field="*{name}">
+
+                <div class="row" sec:authorize="isAnonymous()">
                     <div class="col-md-4 mb-3">
-                        <input type="text" class="form-control bg-white" th:field="*{name}" placeholder="Tên của bạn" th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''">
+                        <input type="text" class="form-control bg-white" th:field="*{name}" placeholder="Tên của bạn"
+                               th:classappend="${#fields.hasErrors('name')} ? ' is-invalid' : ''">
                         <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
                     </div>
                 </div>
+
                 <div class="mb-2">
-                    <textarea class="form-control bg-white" rows="3" th:field="*{content}" placeholder="Viết bình luận..." th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
+                    <textarea class="form-control bg-white" rows="3" th:field="*{content}" placeholder="Viết bình luận..."
+                              th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
                     <div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></div>
                 </div>
                 <div class="small text-muted mb-3">Bình luận sẽ được duyệt trước khi hiển thị công khai.</div>
@@ -110,7 +167,7 @@
             <div th:each="cmt : ${approvedComments}" class="mb-4 d-flex">
                 <div class="me-3 mt-1"><i class="fas fa-user-circle user-avatar"></i></div>
                 <div class="w-100 border-bottom pb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div class="d-flex justify-content-between align-items-center mb-1 flex-wrap gap-2">
                         <strong class="text-dark fs-6" th:text="${cmt.commenterName}">Độc giả</strong>
                         <small class="text-muted" th:text="${#temporals.format(cmt.createdAt, 'HH:mm | dd/MM/yyyy')}">Thời gian</small>
                     </div>
@@ -120,5 +177,7 @@
         </div>
     </div>
 </div>
+
+<th:block th:replace="~{fragments/public-header :: siteScripts}"></th:block>
 </body>
 </html>

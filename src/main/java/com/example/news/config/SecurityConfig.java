@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -31,6 +32,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/backoffice/media/**").hasAnyRole("ADMIN", "EDITOR", "AUTHOR")
+                .requestMatchers(HttpMethod.POST, "/article/save/**").authenticated()
                 .requestMatchers(
                         "/",
                         "/category/**",

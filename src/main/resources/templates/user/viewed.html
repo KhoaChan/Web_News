@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tin đã lưu | News</title>
+    <title>Tin đã xem | News</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { background: #f8fafc; font-family: 'Roboto', sans-serif; color: #1f2937; }
-        .saved-thumb { width: 120px; height: 80px; object-fit: cover; border-radius: 12px; }
+        .viewed-thumb { width: 120px; height: 80px; object-fit: cover; border-radius: 12px; }
     </style>
 </head>
 <body>
@@ -17,14 +17,14 @@
 
 <div th:replace="~{user/fragments/account-shell :: shell(${activeKey}, ~{::content})}">
     <th:block th:fragment="content">
-        <div th:if="${#lists.isEmpty(savedArticles)}" class="reader-empty">
-            Bạn chưa lưu bài viết nào. Hãy thử lưu một bài từ trang chi tiết để xem lại nhanh hơn.
+        <div th:if="${#lists.isEmpty(viewedArticles)}" class="reader-empty">
+            Lịch sử đọc của bạn đang trống. Khi mở một bài viết, hệ thống sẽ lưu lại ở đây để bạn xem lại nhanh hơn.
         </div>
 
-        <div th:if="${not #lists.isEmpty(savedArticles)}">
-            <div th:each="entry : ${savedArticles}" class="reader-article-row">
+        <div th:if="${not #lists.isEmpty(viewedArticles)}">
+            <div th:each="entry : ${viewedArticles}" class="reader-article-row">
                 <div class="d-flex gap-3">
-                    <img class="saved-thumb d-none d-sm-block"
+                    <img class="viewed-thumb d-none d-sm-block"
                          th:src="${entry.article.thumbnailUrl != null and !#strings.isEmpty(entry.article.thumbnailUrl) ? entry.article.thumbnailUrl : 'https://via.placeholder.com/240x160?text=News'}"
                          alt="Ảnh bài viết">
                     <div class="flex-grow-1">
@@ -34,11 +34,8 @@
                            th:text="${entry.article.title}">Tiêu đề bài viết</a>
                         <p class="text-secondary mb-2" th:text="${entry.article.summary}">Tóm tắt bài viết.</p>
                         <div class="small text-muted d-flex justify-content-between flex-wrap gap-2">
-                            <span th:text="'Đã lưu lúc ' + ${#temporals.format(entry.savedAt, 'HH:mm - dd/MM/yyyy')}">Đã lưu lúc 10:00 - 05/04/2026</span>
-                            <form th:action="@{/article/save/{id}(id=${entry.article.id})}" method="post">
-                                <input type="hidden" name="redirectTo" value="/profile/saved">
-                                <button type="submit" class="btn btn-link btn-sm text-decoration-none p-0">Bỏ lưu</button>
-                            </form>
+                            <span th:text="'Đã xem lúc ' + ${#temporals.format(entry.viewedAt, 'HH:mm - dd/MM/yyyy')}">Đã xem lúc 10:00 - 05/04/2026</span>
+                            <span th:text="${entry.article.views + ' lượt xem'}">0 lượt xem</span>
                         </div>
                     </div>
                 </div>

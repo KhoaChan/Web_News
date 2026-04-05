@@ -2,67 +2,73 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>News</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #fff; font-family: 'Roboto', sans-serif; color: #222; }
-        .navbar { border-bottom: 1px solid #e5e5e5; padding: 0; }
-        .navbar-brand { font-family: 'Playfair Display', serif; font-size: 2rem; color: #9f224e !important; }
-        .nav-link { font-weight: 500; text-transform: uppercase; font-size: 0.85rem; padding: 15px 20px !important; color: #333 !important; border-bottom: 3px solid transparent; transition: all 0.3s; }
-        .nav-link:hover { color: #9f224e !important; border-bottom: 3px solid #9f224e; }
-        .news-title { font-family: 'Playfair Display', serif; font-weight: 700; color: #222; text-decoration: none; line-height: 1.3; display: block; transition: color 0.2s; }
+        .news-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: #222;
+            text-decoration: none;
+            line-height: 1.3;
+            display: block;
+            transition: color 0.2s;
+        }
         .news-title:hover { color: #9f224e; }
         .title-lead { font-size: 2rem; }
         .title-sub { font-size: 1.2rem; }
         .title-sidebar { font-size: 0.95rem; font-family: 'Roboto', sans-serif; }
-        .news-summary { color: #444; font-size: 0.95rem; line-height: 1.5; margin-top: 10px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-summary {
+            color: #444;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-top: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
         .thumb-wrapper { overflow: hidden; border-radius: 4px; display: block; }
         .thumb-wrapper img { width: 100%; transition: transform 0.4s ease; }
         .thumb-wrapper:hover img { transform: scale(1.05); }
         .img-lead { height: 400px; object-fit: cover; }
         .img-sub { height: 120px; object-fit: cover; width: 100%; }
-        .sidebar-heading { font-weight: 700; color: #9f224e; text-transform: uppercase; border-bottom: 2px solid #9f224e; padding-bottom: 8px; margin-bottom: 20px; display: inline-block; }
+        .sidebar-heading {
+            font-weight: 700;
+            color: #9f224e;
+            text-transform: uppercase;
+            border-bottom: 2px solid #9f224e;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
         .sidebar-item { border-bottom: 1px dashed #ddd; padding-bottom: 12px; margin-bottom: 12px; }
         .sidebar-item:last-child { border-bottom: none; }
-        .rank-number { font-size: 2rem; font-weight: 900; color: #e5e5e5; line-height: 1; margin-right: 15px; font-family: 'Playfair Display', serif; }
-        .pagination-box a { padding: 8px 15px; border: 1px solid #ddd; color: #333; text-decoration: none; margin: 0 5px; border-radius: 4px; transition: 0.2s; }
+        .rank-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #e5e5e5;
+            line-height: 1;
+            margin-right: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+        .pagination-box a {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
         .pagination-box a:hover { background: #9f224e; color: #fff; border-color: #9f224e; }
-        .auth-name { font-size: 0.82rem; color: #666; }
     </style>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-white sticky-top mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold" th:href="@{/}">News</a>
-
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link" th:href="@{/}">Mới nhất</a></li>
-                <li class="nav-item" th:each="cat : ${categories}">
-                    <a class="nav-link" th:href="@{/category/{slug}(slug=${cat.slug})}" th:text="${cat.name}">Chuyên mục</a>
-                </li>
-            </ul>
-
-            <form class="d-flex me-3" th:action="@{/search}" method="get">
-                <input class="form-control form-control-sm" type="search" name="keyword" th:value="${keyword}" placeholder="Tìm theo tiêu đề">
-            </form>
-
-            <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item auth-name me-2" sec:authorize="isAuthenticated()">
-                    <span sec:authentication="principal.displayName">Người dùng</span>
-                </li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-primary fw-bold" th:href="@{/login}">Đăng nhập</a></li>
-                <li class="nav-item" sec:authorize="isAnonymous()"><a class="nav-link text-success fw-bold" th:href="@{/register}">Đăng ký</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-primary fw-bold" th:href="@{/profile}">Hồ sơ</a></li>
-                <li class="nav-item" sec:authorize="hasRole('AUTHOR')"><a class="nav-link text-danger fw-bold" th:href="@{/author}">Tác giả</a></li>
-                <li class="nav-item" sec:authorize="hasRole('EDITOR')"><a class="nav-link text-danger fw-bold" th:href="@{/editor}">Biên tập</a></li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')"><a class="nav-link text-danger fw-bold" th:href="@{/admin}">Quản trị</a></li>
-                <li class="nav-item" sec:authorize="isAuthenticated()"><a class="nav-link text-muted" th:href="@{/logout}">Đăng xuất</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/public-header :: siteHeader(${categories}, ${keyword})}"></nav>
 
 <div class="container">
     <div class="row">
@@ -135,10 +141,12 @@
 
             <div class="mt-5 text-center bg-light p-4 border rounded">
                 <span class="text-muted small d-block mb-2">Quảng cáo</span>
-                <img src="https://via.placeholder.com/300x250?text=Ad+Banner" class="img-fluid rounded" alt="Ads">
+                <img src="https://via.placeholder.com/300x250?text=Ad+Banner" class="img-fluid rounded" alt="Quảng cáo">
             </div>
         </div>
     </div>
 </div>
+
+<th:block th:replace="~{fragments/public-header :: siteScripts}"></th:block>
 </body>
 </html>
