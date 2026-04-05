@@ -20,18 +20,18 @@
         .news-title:hover { color: #9f224e; }
         .title-lead { font-size: 2rem; }
         .title-sub { font-size: 1.2rem; }
-        .title-sidebar { font-size: 0.95rem; font-family: 'Roboto', sans-serif; }
+        .title-sidebar { font-size: 1rem; font-family: 'Roboto', sans-serif; }
         .news-summary {
             color: #444;
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.6;
             margin-top: 10px;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        .thumb-wrapper { overflow: hidden; border-radius: 4px; display: block; }
+        .thumb-wrapper { overflow: hidden; border-radius: 8px; display: block; }
         .thumb-wrapper img { width: 100%; transition: transform 0.4s ease; }
         .thumb-wrapper:hover img { transform: scale(1.05); }
         .img-lead { height: 400px; object-fit: cover; }
@@ -45,7 +45,11 @@
             margin-bottom: 20px;
             display: inline-block;
         }
-        .sidebar-item { border-bottom: 1px dashed #ddd; padding-bottom: 12px; margin-bottom: 12px; }
+        .sidebar-item {
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+        }
         .sidebar-item:last-child { border-bottom: none; }
         .rank-number {
             font-size: 2rem;
@@ -73,17 +77,18 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-8 border-end pe-lg-4">
-            <div class="alert alert-info" th:if="${keyword != null}" th:text="'Kết quả tìm kiếm cho: ' + ${keyword}"></div>
-
             <div th:if="${not #lists.isEmpty(articles)}" class="mb-5">
                 <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="thumb-wrapper mb-3">
-                    <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}" class="img-lead" alt="Ảnh minh họa">
+                    <img th:src="${articles[0].thumbnailUrl ?: 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800&q=80'}"
+                         class="img-lead" alt="Ảnh minh họa">
                 </a>
-                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead" th:text="${articles[0].title}">Tiêu đề nổi bật</a>
+                <a th:href="@{/article/{slug}(slug=${articles[0].slug})}" class="news-title title-lead"
+                   th:text="${articles[0].title}">Tiêu đề nổi bật</a>
                 <p class="news-summary" th:text="${articles[0].summary}">Tóm tắt</p>
                 <div class="text-muted small mt-2">
-                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold">Chuyên mục</span> -
-                    <span th:text="${#temporals.format(articles[0].createdAt, 'dd/MM/yyyy')}">Ngày</span>
+                    <span th:text="${articles[0].category.name}" class="text-danger fw-bold">Chuyên mục</span>
+                    <span class="mx-2">·</span>
+                    <span th:text="${#temporals.format(articles[0].publishedAt != null ? articles[0].publishedAt : articles[0].createdAt, 'dd/MM/yyyy')}">Ngày đăng</span>
                 </div>
             </div>
 
@@ -96,14 +101,18 @@
             <div th:each="article, iter : ${articles}" th:if="${iter.index > 0}" class="row mb-4 pb-4 border-bottom">
                 <div class="col-md-4 col-5">
                     <a th:href="@{/article/{slug}(slug=${article.slug})}" class="thumb-wrapper">
-                        <img th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}" class="img-sub" alt="Ảnh minh họa">
+                        <img th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}"
+                             class="img-sub" alt="Ảnh minh họa">
                     </a>
                 </div>
                 <div class="col-md-8 col-7">
-                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub" th:text="${article.title}">Tiêu đề bài viết</a>
+                    <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sub"
+                       th:text="${article.title}">Tiêu đề bài viết</a>
                     <p class="news-summary d-none d-md-block" th:text="${article.summary}">Tóm tắt</p>
                     <div class="text-muted small mt-2">
                         <span th:text="${article.category.name}" class="text-danger fw-bold">Chuyên mục</span>
+                        <span class="mx-2">·</span>
+                        <span th:text="${#temporals.format(article.publishedAt != null ? article.publishedAt : article.createdAt, 'dd/MM/yyyy')}">Ngày đăng</span>
                     </div>
                 </div>
             </div>
@@ -111,32 +120,35 @@
             <div th:if="${totalPages > 1}" class="pagination-box text-center mt-5 mb-5">
                 <a th:if="${currentPage > 0 and currentCategorySlug != null}"
                    th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage - 1})}">&laquo; Trước</a>
-                <a th:if="${currentPage > 0 and keyword != null}"
-                   th:href="@{/search(keyword=${keyword}, page=${currentPage - 1})}">&laquo; Trước</a>
-                <a th:if="${currentPage > 0 and currentCategorySlug == null and keyword == null}"
+                <a th:if="${currentPage > 0 and currentCategorySlug == null}"
                    th:href="@{/(page=${currentPage - 1})}">&laquo; Trước</a>
 
-                <span class="mx-3 fw-bold text-muted" th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Trang</span>
+                <span class="mx-3 fw-bold text-muted"
+                      th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Trang</span>
 
                 <a th:if="${currentPage < totalPages - 1 and currentCategorySlug != null}"
                    th:href="@{/category/{slug}(slug=${currentCategorySlug}, page=${currentPage + 1})}">Sau &raquo;</a>
-                <a th:if="${currentPage < totalPages - 1 and keyword != null}"
-                   th:href="@{/search(keyword=${keyword}, page=${currentPage + 1})}">Sau &raquo;</a>
-                <a th:if="${currentPage < totalPages - 1 and currentCategorySlug == null and keyword == null}"
+                <a th:if="${currentPage < totalPages - 1 and currentCategorySlug == null}"
                    th:href="@{/(page=${currentPage + 1})}">Sau &raquo;</a>
             </div>
         </div>
 
         <div class="col-lg-4 ps-lg-4 mt-4 mt-lg-0">
             <h5 class="sidebar-heading">Xem nhiều</h5>
-            <div class="mt-3">
-                <div th:each="article, iter : ${articles}" th:if="${iter.index < 6}" class="sidebar-item d-flex align-items-start">
+            <div class="mt-3" th:if="${not #lists.isEmpty(mostViewedArticles)}">
+                <div th:each="article, iter : ${mostViewedArticles}" class="sidebar-item d-flex align-items-start">
                     <span class="rank-number" th:text="${iter.index + 1}">1</span>
                     <div>
-                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar" th:text="${article.title}">Tiêu đề nổi bật</a>
-                        <div class="text-muted small mt-1"><span th:text="${article.views}">0</span> lượt xem</div>
+                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="news-title title-sidebar"
+                           th:text="${article.title}">Tiêu đề nổi bật</a>
+                        <div class="text-muted small mt-1">
+                            <span th:text="${article.views}">0</span> lượt xem
+                        </div>
                     </div>
                 </div>
+            </div>
+            <div th:if="${#lists.isEmpty(mostViewedArticles)}" class="text-muted small">
+                Chưa có đủ dữ liệu để thống kê bài xem nhiều.
             </div>
 
             <div class="mt-5 text-center bg-light p-4 border rounded">

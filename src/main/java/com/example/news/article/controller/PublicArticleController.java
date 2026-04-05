@@ -63,6 +63,7 @@ public class PublicArticleController {
 
         model.addAttribute("categories", categoryService.findAll());
         model.addAttribute("articles", articlePage.getContent());
+        model.addAttribute("mostViewedArticles", articleQueryService.findMostViewedPublishedArticles());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", articlePage.getTotalPages());
         model.addAttribute("currentCategorySlug", slug);

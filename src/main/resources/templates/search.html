@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tìm kiếm | News</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #fff; font-family: 'Roboto', sans-serif; color: #1f2937; }
+        .search-shell { padding-top: 18px; }
+        .search-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #111827;
+        }
+        .search-panel {
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+            padding: 24px;
+            background: #fff;
+        }
+        .search-sort-tabs .btn {
+            min-width: 140px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+        .search-result-item {
+            padding: 28px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .search-result-item:last-child { border-bottom: none; }
+        .search-result-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            line-height: 1.35;
+        }
+        .search-result-title:hover { color: #9f224e; }
+        .search-result-summary {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #475569;
+            margin: 14px 0;
+        }
+        .search-result-thumb {
+            width: 100%;
+            max-width: 260px;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        .search-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: #64748b;
+            font-size: 0.92rem;
+        }
+        .search-meta strong { color: #9f224e; }
+        .sidebar-heading {
+            font-weight: 700;
+            color: #9f224e;
+            text-transform: uppercase;
+            border-bottom: 2px solid #9f224e;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        .sidebar-item {
+            border-bottom: 1px dashed #ddd;
+            padding-bottom: 14px;
+            margin-bottom: 14px;
+        }
+        .sidebar-item:last-child { border-bottom: none; }
+        .rank-number {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #e5e5e5;
+            line-height: 1;
+            margin-right: 15px;
+            font-family: 'Playfair Display', serif;
+        }
+        .sidebar-title {
+            color: #111827;
+            font-weight: 700;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+        .sidebar-title:hover { color: #9f224e; }
+        .pagination-box a {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            color: #333;
+            text-decoration: none;
+            margin: 0 5px;
+            border-radius: 4px;
+            transition: 0.2s;
+        }
+        .pagination-box a:hover { background: #9f224e; color: #fff; border-color: #9f224e; }
+    </style>
+</head>
+<body>
+<nav th:replace="~{fragments/public-header :: siteHeader(${categories}, ${keyword})}"></nav>
+
+<div class="container search-shell">
+    <div class="row g-5">
+        <div class="col-lg-8">
+            <h1 class="search-title mb-4">Tìm kiếm</h1>
+
+            <div class="search-panel mb-4">
+                <form th:action="@{/search}" method="get">
+                    <div class="mb-3 position-relative">
+                        <input class="form-control form-control-lg pe-5" type="search" name="keyword"
+                               th:value="${keyword}" placeholder="Nhập từ khóa để tìm bài viết">
+                        <span class="position-absolute top-50 end-0 translate-middle-y me-3 text-muted">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+
+                    <input type="hidden" name="sort" th:value="${selectedSort}">
+
+                    <div class="row g-3">
+                        <div class="col-md-6 col-lg-4">
+                            <label class="form-label fw-semibold">Thời gian</label>
+                            <select class="form-select" name="time">
+                                <option th:each="timeOption : ${timeOptions.entrySet()}"
+                                        th:value="${timeOption.key}"
+                                        th:selected="${selectedTime == timeOption.key}"
+                                        th:text="${timeOption.value}">Tất cả</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <label class="form-label fw-semibold">Chuyên mục</label>
+                            <select class="form-select" name="category">
+                                <option value="all" th:selected="${selectedCategory == 'all'}">Tất cả</option>
+                                <option th:each="cat : ${availableCategories}"
+                                        th:value="${cat.slug}"
+                                        th:selected="${selectedCategory == cat.slug}"
+                                        th:text="${cat.name}">Chuyên mục</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-danger w-100">Áp dụng bộ lọc</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="search-sort-tabs d-flex gap-2 mb-4">
+                <a class="btn"
+                   th:classappend="${selectedSort == 'newest'} ? ' btn-danger' : ' btn-outline-secondary'"
+                   th:href="@{/search(keyword=${keyword}, time=${selectedTime}, category=${selectedCategory}, sort='newest', page=0)}">
+                    Mới nhất
+                </a>
+                <a class="btn"
+                   th:classappend="${selectedSort == 'relevant'} ? ' btn-danger' : ' btn-outline-secondary'"
+                   th:href="@{/search(keyword=${keyword}, time=${selectedTime}, category=${selectedCategory}, sort='relevant', page=0)}">
+                    Liên quan
+                </a>
+            </div>
+
+            <div th:if="${#lists.isEmpty(articles)}" class="text-center text-muted py-5 border rounded">
+                Không tìm thấy bài viết phù hợp với bộ lọc hiện tại.
+            </div>
+
+            <div th:if="${not #lists.isEmpty(articles)}">
+                <div th:each="article : ${articles}" class="search-result-item">
+                    <div class="row g-4 align-items-start">
+                        <div class="col-md-8">
+                            <a class="search-result-title" th:href="@{/article/{slug}(slug=${article.slug})}"
+                               th:text="${article.title}">Tiêu đề bài viết</a>
+                            <p class="search-result-summary" th:text="${article.summary}">Tóm tắt bài viết</p>
+                            <div class="search-meta">
+                                <span><strong th:text="${article.category.name}">Chuyên mục</strong></span>
+                                <span th:text="${#temporals.format(article.publishedAt != null ? article.publishedAt : article.createdAt, 'dd/MM/yyyy HH:mm')}">05/04/2026 12:00</span>
+                                <span><i class="fas fa-eye me-1"></i><span th:text="${article.views}">0</span> lượt xem</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a th:href="@{/article/{slug}(slug=${article.slug})}">
+                                <img class="search-result-thumb"
+                                     th:src="${article.thumbnailUrl ?: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400&q=80'}"
+                                     alt="Ảnh minh họa">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${totalPages > 1}" class="pagination-box text-center mt-5 mb-4">
+                <a th:if="${currentPage > 0}"
+                   th:href="@{/search(keyword=${keyword}, time=${selectedTime}, category=${selectedCategory}, sort=${selectedSort}, page=${currentPage - 1})}">&laquo; Trước</a>
+
+                <span class="mx-3 fw-bold text-muted"
+                      th:text="'Trang ' + (${currentPage} + 1) + ' / ' + ${totalPages}">Trang</span>
+
+                <a th:if="${currentPage < totalPages - 1}"
+                   th:href="@{/search(keyword=${keyword}, time=${selectedTime}, category=${selectedCategory}, sort=${selectedSort}, page=${currentPage + 1})}">Sau &raquo;</a>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <h5 class="sidebar-heading">Xem nhiều</h5>
+            <div class="mt-3" th:if="${not #lists.isEmpty(mostViewedArticles)}">
+                <div th:each="article, iter : ${mostViewedArticles}" class="sidebar-item d-flex align-items-start">
+                    <span class="rank-number" th:text="${iter.index + 1}">1</span>
+                    <div>
+                        <a th:href="@{/article/{slug}(slug=${article.slug})}" class="sidebar-title"
+                           th:text="${article.title}">Tiêu đề bài viết</a>
+                        <div class="text-muted small mt-1"><span th:text="${article.views}">0</span> lượt xem</div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${#lists.isEmpty(mostViewedArticles)}" class="text-muted small">
+                Chưa có dữ liệu xem nhiều.
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/public-header :: siteScripts}"></th:block>
+</body>
+</html>
