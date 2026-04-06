@@ -1,5 +1,6 @@
 package com.example.news.article.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -22,6 +23,7 @@ import org.springframework.security.web.method.annotation.AuthenticationPrincipa
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import com.example.news.article.entity.Article;
 import com.example.news.article.entity.ArticleStatus;
@@ -29,7 +31,10 @@ import com.example.news.article.service.ArticleQueryService;
 import com.example.news.category.entity.Category;
 import com.example.news.category.service.CategoryService;
 import com.example.news.comment.service.CommentService;
+import com.example.news.common.exception.InvalidOperationException;
 import com.example.news.common.web.GlobalExceptionHandler;
+import com.example.news.user.entity.Role;
+import com.example.news.user.security.NewsUserPrincipal;
 import com.example.news.user.service.ReaderActivityService;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,6 +52,7 @@ class PublicArticleControllerTest {
     @Mock
     private ReaderActivityService readerActivityService;
 
+    private PublicArticleController controller;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -54,8 +60,8 @@ class PublicArticleControllerTest {
         LocalValidatorFactoryBean validator = new LocalValidatorFactoryBean();
         validator.afterPropertiesSet();
 
-        mockMvc = MockMvcBuilders.standaloneSetup(
-                        new PublicArticleController(articleQueryService, categoryService, commentService, readerActivityService))
+        controller = new PublicArticleController(articleQueryService, categoryService, commentService, readerActivityService);
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .setControllerAdvice(new GlobalExceptionHandler())
                 .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver())
                 .setValidator(validator)
@@ -116,5 +122,28 @@ class PublicArticleControllerTest {
         mockMvc.perform(post("/article/save/1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    void toggleSavedArticleShouldRedirectBackWithErrorMessageWhenSaveFails() {
+        NewsUserPrincipal principal = new NewsUserPrincipal(
+                1L,
+                "reader",
+                "secret",
+                "Reader",
+                "reader@example.com",
+                null,
+                Role.USER,
+                true);
+        RedirectAttributesModelMap redirectAttributes = new RedirectAttributesModelMap();
+
+        when(readerActivityService.toggleSavedArticle(1L, 1L))
+                .thenThrow(new InvalidOperationException("Khong the luu bai viet luc nay. Vui long thu lai."));
+
+        String viewName = controller.toggleSavedArticle(1L, principal, "/article/sample-article", redirectAttributes);
+
+        assertThat(viewName).isEqualTo("redirect:/article/sample-article");
+        assertThat(redirectAttributes.getFlashAttributes().get("errorMessage"))
+                .isEqualTo("Khong the luu bai viet luc nay. Vui long thu lai.");
     }
 }

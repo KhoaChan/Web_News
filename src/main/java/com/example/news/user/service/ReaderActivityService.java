@@ -3,6 +3,7 @@ package com.example.news.user.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import com.example.news.article.entity.ArticleStatus;
 import com.example.news.article.repository.ArticleRepository;
 import com.example.news.comment.entity.Comment;
 import com.example.news.comment.repository.CommentRepository;
+import com.example.news.common.exception.InvalidOperationException;
 import com.example.news.common.exception.ResourceNotFoundException;
 import com.example.news.user.entity.SavedArticle;
 import com.example.news.user.entity.User;
@@ -53,17 +55,22 @@ public class ReaderActivityService {
 
     @Transactional
     public boolean toggleSavedArticle(Long userId, Long articleId) {
-        SavedArticle existing = savedArticleRepository.findByUserIdAndArticleId(userId, articleId).orElse(null);
-        if (existing != null) {
-            savedArticleRepository.delete(existing);
-            return false;
-        }
+        try {
+            SavedArticle existing = savedArticleRepository.findByUserIdAndArticleId(userId, articleId).orElse(null);
+            if (existing != null) {
+                savedArticleRepository.delete(existing);
+                savedArticleRepository.flush();
+                return false;
+            }
 
-        SavedArticle savedArticle = new SavedArticle();
-        savedArticle.setUser(getUser(userId));
-        savedArticle.setArticle(getPublishedArticle(articleId));
-        savedArticleRepository.save(savedArticle);
-        return true;
+            SavedArticle savedArticle = new SavedArticle();
+            savedArticle.setUser(getUser(userId));
+            savedArticle.setArticle(getPublishedArticle(articleId));
+            savedArticleRepository.saveAndFlush(savedArticle);
+            return true;
+        } catch (DataAccessException exception) {
+            throw new InvalidOperationException("Khong the luu bai viet luc nay. Vui long thu lai.");
+        }
     }
 
     @Transactional

@@ -30,6 +30,8 @@ public class AiArticleInsightService {
     private static final Pattern MULTI_SPACE_PATTERN = Pattern.compile("\\s+");
     private static final Pattern SENTENCE_SPLIT_PATTERN = Pattern.compile("(?<=[.!?])\\s+");
     private static final Pattern WORD_PATTERN = Pattern.compile("[\\p{L}\\p{N}']+");
+    private static final int SHORT_SUMMARY_SENTENCE_LIMIT = 2;
+    private static final int DETAILED_SUMMARY_SENTENCE_LIMIT = 3;
     private static final int RELATED_LIMIT = 3;
 
     private static final Set<String> STOP_WORDS = Set.of(
@@ -79,28 +81,28 @@ public class AiArticleInsightService {
     }
 
     private String extractPlainText(Article article) {
-        String summary = normalizeWhitespace(article.getSummary());
-        String content = normalizeWhitespace(HTML_TAG_PATTERN.matcher(Objects.toString(article.getContent(), "")).replaceAll(" "));
-        return normalizeWhitespace((summary + ". " + content).trim());
+        List<String> fragments = new ArrayList<>();
+        addIfHasText(fragments, article.getSummary());
+        addIfHasText(fragments, stripHtml(article.getContent()));
+        return normalizeWhitespace(String.join(". ", fragments));
     }
 
     private String buildShortSummary(Article article, List<String> sentences) {
         if (StringUtils.hasText(article.getSummary())) {
             return normalizeWhitespace(article.getSummary());
         }
-        return joinSentences(sentences, 2);
+        return joinSentences(sentences, SHORT_SUMMARY_SENTENCE_LIMIT);
     }
 
     private String buildDetailedSummary(Article article, List<String> sentences) {
         List<String> selectedSentences = new ArrayList<>();
-        if (StringUtils.hasText(article.getSummary())) {
-            selectedSentences.add(normalizeWhitespace(article.getSummary()));
-        }
-        selectedSentences.addAll(sentences.stream().limit(3).toList());
-        return selectedSentences.stream()
+        addIfHasText(selectedSentences, article.getSummary());
+        selectedSentences.addAll(sentences.stream().limit(DETAILED_SUMMARY_SENTENCE_LIMIT).toList());
+        String detailedSummary = selectedSentences.stream()
                 .filter(StringUtils::hasText)
                 .distinct()
                 .collect(Collectors.joining(" "));
+        return StringUtils.hasText(detailedSummary) ? detailedSummary : buildShortSummary(article, sentences);
     }
 
     private List<String> buildKeyPoints(Article article, List<String> sentences, List<String> keywords) {
@@ -159,7 +161,7 @@ public class AiArticleInsightService {
     }
 
     private String trimSentence(String sentence) {
-        return normalizeWhitespace(sentence).replaceAll("^[\\-•]+\\s*", "");
+        return normalizeWhitespace(sentence).replaceFirst("^[-*]+\\s*", "");
     }
 
     private String joinSentences(List<String> sentences, int limit) {
@@ -208,6 +210,20 @@ public class AiArticleInsightService {
 
     private int estimateReadingTime(int wordCount) {
         return Math.max(1, (int) Math.ceil(wordCount / 220.0));
+    }
+
+    private void addIfHasText(List<String> target, String value) {
+        String normalized = normalizeWhitespace(value);
+        if (StringUtils.hasText(normalized)) {
+            target.add(normalized);
+        }
+    }
+
+    private String stripHtml(String input) {
+        if (!StringUtils.hasText(input)) {
+            return "";
+        }
+        return HTML_TAG_PATTERN.matcher(input).replaceAll(" ");
     }
 
     private String normalizeWhitespace(String input) {

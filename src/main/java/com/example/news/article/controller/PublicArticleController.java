@@ -17,6 +17,7 @@ import com.example.news.article.service.ArticleQueryService;
 import com.example.news.category.service.CategoryService;
 import com.example.news.comment.service.CommentService;
 import com.example.news.comment.web.CommentForm;
+import com.example.news.common.exception.InvalidOperationException;
 import com.example.news.user.security.NewsUserPrincipal;
 import com.example.news.user.service.ReaderActivityService;
 
@@ -103,13 +104,25 @@ public class PublicArticleController {
             return "redirect:/login";
         }
 
-        boolean saved = readerActivityService.toggleSavedArticle(principal.getId(), id);
-        redirectAttributes.addFlashAttribute("successMessage", saved ? "Đã lưu bài viết." : "Đã bỏ lưu bài viết.");
-        if (redirectTo != null && redirectTo.startsWith("/")) {
-            return "redirect:" + redirectTo;
+        try {
+            boolean saved = readerActivityService.toggleSavedArticle(principal.getId(), id);
+            redirectAttributes.addFlashAttribute("successMessage", saved ? "Đã lưu bài viết." : "Đã bỏ lưu bài viết.");
+        } catch (InvalidOperationException exception) {
+            redirectAttributes.addFlashAttribute("errorMessage", exception.getMessage());
         }
-        Article article = articleQueryService.getPublishedArticleById(id);
-        return "redirect:/article/" + article.getSlug();
+        return "redirect:" + resolveSaveRedirectTarget(id, redirectTo);
+    }
+
+    private String resolveSaveRedirectTarget(Long articleId, String redirectTo) {
+        if (redirectTo != null && redirectTo.startsWith("/")) {
+            return redirectTo;
+        }
+        try {
+            Article article = articleQueryService.getPublishedArticleById(articleId);
+            return "/article/" + article.getSlug();
+        } catch (RuntimeException exception) {
+            return "/";
+        }
     }
 
     private void populateDetailModel(Model model, Article article, NewsUserPrincipal principal) {
