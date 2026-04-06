@@ -6,6 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -167,6 +169,64 @@ public class ArticleQueryService {
                     }
                     if (content.contains(token)) {
                         score += 1;
+                    }
+                    return score;
+                })
+                .sum();
+    }
+
+    public Article getPublishedArticleBySlug(String slug) {
+        return articleRepository.findBySlugAndStatus(slug, ArticleStatus.PUBLISHED)
+                .orElseThrow(() -> new ResourceNotFoundException("Khong tim thay bai viet voi duong dan: " + slug));
+    }
+
+    public List<Article> findAiSearchCandidates() {
+        return articleRepository.findPublishedCandidatesForSearch(ArticleStatus.PUBLISHED, null, null);
+    }
+
+    public List<Article> findRelatedPublishedArticles(Long currentArticleId, List<String> keywords, int limit) {
+        Set<String> normalizedKeywords = keywords.stream()
+                .filter(StringUtils::hasText)
+                .map(keyword -> keyword.toLowerCase(Locale.ROOT))
+                .collect(Collectors.toSet());
+
+        return articleRepository.findPublishedCandidatesForSearch(ArticleStatus.PUBLISHED, null, null).stream()
+                .filter(article -> !article.getId().equals(currentArticleId))
+                .map(article -> new ScoredArticle(article, calculateRelatedScore(article, normalizedKeywords)))
+                .filter(scoredArticle -> scoredArticle.score() > 0)
+                .sorted(Comparator
+                        .comparingInt(ScoredArticle::score)
+                        .reversed()
+                        .thenComparing(scoredArticle -> getFreshnessTime(scoredArticle.article()), Comparator.reverseOrder()))
+                .map(ScoredArticle::article)
+                .limit(limit)
+                .toList();
+    }
+
+    private int calculateRelatedScore(Article article, Set<String> keywords) {
+        if (keywords.isEmpty()) {
+            return 0;
+        }
+
+        String title = normalizeText(article.getTitle());
+        String summary = normalizeText(article.getSummary());
+        String content = normalizeText(article.getContent());
+        String category = article.getCategory() != null ? normalizeText(article.getCategory().getName()) : "";
+
+        return keywords.stream()
+                .mapToInt(keyword -> {
+                    int score = 0;
+                    if (title.contains(keyword)) {
+                        score += 4;
+                    }
+                    if (summary.contains(keyword)) {
+                        score += 3;
+                    }
+                    if (content.contains(keyword)) {
+                        score += 2;
+                    }
+                    if (category.contains(keyword)) {
+                        score += 2;
                     }
                     return score;
                 })

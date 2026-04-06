@@ -110,4 +110,11 @@ class PublicArticleControllerTest {
 
         verify(commentService).createComment(any(), eq(null));
     }
+
+    @Test
+    void toggleSavedArticleShouldRedirectToLoginWhenPrincipalMissing() throws Exception {
+        mockMvc.perform(post("/article/save/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
 }

@@ -227,6 +227,23 @@ class SecurityConfigIntegrationTest {
     }
 
     @Test
+    void aiChatApiShouldBeAccessibleWithoutAuthentication() throws Exception {
+        mockMvc.perform(post("/api/ai/chat")
+                        .contentType("application/json")
+                        .content("""
+                                {
+                                  "currentPath": "/",
+                                  "pageTitle": "News",
+                                  "articleSlug": null,
+                                  "messages": [
+                                    { "role": "user", "content": "Tom tat trang nay" }
+                                  ]
+                                }
+                                """))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void adminLoginShouldRedirectToAdminDashboard() throws Exception {
         mockMvc.perform(formLogin("/login").user("admin").password("123456"))
                 .andExpect(status().is3xxRedirection())

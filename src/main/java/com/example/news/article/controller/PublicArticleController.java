@@ -99,6 +99,10 @@ public class PublicArticleController {
             @AuthenticationPrincipal NewsUserPrincipal principal,
             @RequestParam(value = "redirectTo", required = false) String redirectTo,
             RedirectAttributes redirectAttributes) {
+        if (principal == null) {
+            return "redirect:/login";
+        }
+
         boolean saved = readerActivityService.toggleSavedArticle(principal.getId(), id);
         redirectAttributes.addFlashAttribute("successMessage", saved ? "Đã lưu bài viết." : "Đã bỏ lưu bài viết.");
         if (redirectTo != null && redirectTo.startsWith("/")) {
