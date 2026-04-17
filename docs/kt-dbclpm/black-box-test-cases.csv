@@ -1,0 +1,29 @@
+Test Case ID,Chức năng,Mô tả,Dữ liệu vào,KQ mong đợi,KQ thực tế,Trạng thái
+BB-TC01,REQ01,"[Phân lớp tương đương] Đăng ký với dữ liệu hợp lệ","username=reader01; email=reader01@example.com; password=123456; confirmPassword=123456","Tạo tài khoản thành công và chuyển về trang đăng nhập",Chưa thực hiện,PLANNED
+BB-TC02,REQ01,"[Phân lớp tương đương] Username chứa ký tự không hợp lệ","username=reader 01; email=reader02@example.com; password=123456; confirmPassword=123456","Hệ thống báo lỗi username không hợp lệ",Chưa thực hiện,PLANNED
+BB-TC03,REQ01,"[Phân lớp tương đương] Username đã tồn tại","username=admin; email=reader03@example.com; password=123456; confirmPassword=123456","Hệ thống báo lỗi trùng username",Chưa thực hiện,PLANNED
+BB-TC04,REQ01,"[Phân lớp tương đương] Email đã tồn tại","username=reader04; email=admin@news.com; password=123456; confirmPassword=123456","Hệ thống báo lỗi trùng email",Chưa thực hiện,PLANNED
+BB-TC05,REQ01,"[Phân lớp tương đương] Xác nhận mật khẩu không khớp","username=reader05; email=reader05@example.com; password=123456; confirmPassword=654321","Hệ thống báo lỗi confirmPassword",Chưa thực hiện,PLANNED
+BB-TC06,REQ01,"[Giá trị biên] Username dài 2 ký tự","username=ab; email=reader06@example.com; password=123456; confirmPassword=123456","Hệ thống báo lỗi độ dài username",Chưa thực hiện,PLANNED
+BB-TC07,REQ01,"[Giá trị biên] Username dài 3 ký tự","username=abc; email=reader07@example.com; password=123456; confirmPassword=123456","Username được chấp nhận hợp lệ",Chưa thực hiện,PLANNED
+BB-TC08,REQ01,"[Giá trị biên] Password dài 5 ký tự","username=reader08; email=reader08@example.com; password=12345; confirmPassword=12345","Hệ thống báo lỗi độ dài password",Chưa thực hiện,PLANNED
+BB-TC09,REQ01,"[Giá trị biên] Password dài 6 ký tự","username=reader09; email=reader09@example.com; password=123456; confirmPassword=123456","Password được chấp nhận hợp lệ",Chưa thực hiện,PLANNED
+BB-TC10,REQ02,"[Phân lớp tương đương] Đăng nhập hợp lệ","username=user; password=123456","Người dùng đăng nhập thành công",Chưa thực hiện,PLANNED
+BB-TC11,REQ02,"[Phân lớp tương đương] Sai mật khẩu","username=user; password=saimatkhau","Hệ thống quay lại /login?error",Chưa thực hiện,PLANNED
+BB-TC12,REQ02,"[Phân lớp tương đương] Sai username","username=khongtontai; password=123456","Hệ thống quay lại /login?error",Chưa thực hiện,PLANNED
+BB-TC13,REQ02,"[Phân lớp tương đương] Bỏ trống username và password","username=; password=","Hệ thống không cho đăng nhập và giữ ở màn hình login",Chưa thực hiện,PLANNED
+BB-TC14,REQ02,"[Phân lớp tương đương] Truy cập /login khi đã đăng nhập","principal=USER","Hệ thống điều hướng người dùng đã đăng nhập về dashboard phù hợp",Chưa thực hiện,PLANNED
+BB-TC15,REQ04,"[Phân lớp tương đương] Tìm kiếm với từ khóa có kết quả","keyword=the thao","Danh sách trả về các bài viết phù hợp với từ khóa",Chưa thực hiện,PLANNED
+BB-TC16,REQ04,"[Phân lớp tương đương] Tìm kiếm với từ khóa không có kết quả","keyword=khongtontai123","Hệ thống trả về danh sách rỗng hoặc thông báo không có kết quả",Chưa thực hiện,PLANNED
+BB-TC17,REQ04,"[Phân lớp tương đương] Tìm kiếm với từ khóa rỗng","keyword=","Hệ thống vẫn hiển thị danh sách bài viết công khai",Chưa thực hiện,PLANNED
+BB-TC18,REQ05,"[Phân lớp tương đương] Tác giả lưu bản nháp hợp lệ","title; slug; summary; content; categoryId hợp lệ","Bài viết được lưu ở trạng thái DRAFT",Chưa thực hiện,PLANNED
+BB-TC19,REQ05,"[Chuyển trạng thái] Gửi bài từ DRAFT sang IN_REVIEW","status=DRAFT","Bài viết chuyển sang trạng thái IN_REVIEW",Chưa thực hiện,PLANNED
+BB-TC20,REQ05,"[Chuyển trạng thái] Gửi lại bài từ CHANGES_REQUESTED sang IN_REVIEW","status=CHANGES_REQUESTED","Bài viết chuyển lại sang IN_REVIEW và xóa reviewNote cũ",Chưa thực hiện,PLANNED
+BB-TC21,REQ05,"[Chuyển trạng thái] Gửi bài đã PUBLISHED","status=PUBLISHED","Hệ thống từ chối thao tác và báo lỗi nghiệp vụ",Chưa thực hiện,PLANNED
+BB-TC22,REQ07,"[Bảng điều kiện] Editor duyệt bài ở trạng thái IN_REVIEW","role=EDITOR; status=IN_REVIEW","Bài viết chuyển sang PUBLISHED",Chưa thực hiện,PLANNED
+BB-TC23,REQ07,"[Bảng điều kiện] Editor duyệt bài không ở trạng thái IN_REVIEW","role=EDITOR; status=DRAFT","Hệ thống từ chối thao tác",Chưa thực hiện,PLANNED
+BB-TC24,REQ07,"[Bảng điều kiện] Author truy cập thao tác duyệt bài","role=AUTHOR; status=IN_REVIEW","Hệ thống chặn thao tác do sai vai trò",Chưa thực hiện,PLANNED
+BB-TC25,REQ08,"[Phân lớp tương đương] Người dùng đăng nhập gửi bình luận hợp lệ","articleId=1; content=Bài viết rất hữu ích","Bình luận được lưu ở trạng thái PENDING",Chưa thực hiện,PLANNED
+BB-TC26,REQ08,"[Giá trị biên] Nội dung bình luận dài đúng 1000 ký tự","articleId=1; content=1000 ký tự","Hệ thống chấp nhận bình luận hợp lệ",Chưa thực hiện,PLANNED
+BB-TC27,REQ08,"[Giá trị biên] Nội dung bình luận dài 1001 ký tự","articleId=1; content=1001 ký tự","Hệ thống báo lỗi vượt giới hạn độ dài",Chưa thực hiện,PLANNED
+BB-TC28,REQ08,"[Phân lớp tương đương] Gửi bình luận vào bài chưa xuất bản","articleId của bài DRAFT; content=Hợp lệ","Hệ thống từ chối tạo bình luận",Chưa thực hiện,PLANNED

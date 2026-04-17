@@ -115,6 +115,27 @@ class UserProfileServiceTest {
     }
 
     @Test
+    void validateChangePasswordFormShouldAcceptCorrectCurrentPasswordAndMatchingConfirmation() {
+        User user = new User();
+        user.setId(13L);
+        user.setPassword("encoded-old-password");
+
+        ChangePasswordForm form = new ChangePasswordForm();
+        form.setCurrentPassword("123456");
+        form.setNewPassword("654321");
+        form.setConfirmPassword("654321");
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(form, "changePasswordForm");
+
+        when(userRepository.findById(13L)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches("123456", "encoded-old-password")).thenReturn(true);
+
+        userProfileService.validateChangePasswordForm(13L, form, bindingResult);
+
+        assertThat(bindingResult.hasErrors()).isFalse();
+    }
+
+    @Test
     void changePasswordShouldEncodeAndPersistPassword() {
         User user = new User();
         user.setId(11L);

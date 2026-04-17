@@ -1,0 +1,13 @@
+Test Case ID,Chức năng,Mô tả,Dữ liệu vào,KQ mong đợi,KQ thực tế,Trạng thái
+WB-TC01,REQ01,"[Phủ lệnh; Phủ nhánh; Phủ điều kiện] validateRegistrationForm với duplicate username, duplicate email và confirmPassword mismatch","username=admin; email=admin@news.com; password=123456; confirmPassword=654321","BindingResult có lỗi ở confirmPassword, username và email",Chưa thực hiện,PLANNED
+WB-TC02,REQ01,"[Phủ lệnh; Phủ nhánh; Phủ điều kiện] validateRegistrationForm với dữ liệu hợp lệ","username=reader01; email=reader01@example.com; password=123456; confirmPassword=123456","BindingResult không có lỗi",Chưa thực hiện,PLANNED
+WB-TC03,REQ02,"[Phủ lệnh; Phủ nhánh] handleSuccessRedirect với ROLE_ADMIN","authorities=ROLE_ADMIN","Hệ thống redirect về /admin",Chưa thực hiện,PLANNED
+WB-TC04,REQ02,"[Phủ lệnh; Phủ nhánh] handleSuccessRedirect với ROLE_EDITOR","authorities=ROLE_EDITOR","Hệ thống redirect về /editor",Chưa thực hiện,PLANNED
+WB-TC05,REQ02,"[Phủ lệnh; Phủ nhánh] handleSuccessRedirect với ROLE_AUTHOR","authorities=ROLE_AUTHOR","Hệ thống redirect về /author",Chưa thực hiện,PLANNED
+WB-TC06,REQ02,"[Phủ lệnh; Phủ nhánh] handleSuccessRedirect với ROLE_USER","authorities=ROLE_USER","Hệ thống redirect về /",Chưa thực hiện,PLANNED
+WB-TC07,REQ05,"[Phủ lệnh; Phủ nhánh; Phủ đường] submitForReview với status DRAFT","status=DRAFT","Bài viết chuyển sang IN_REVIEW",Chưa thực hiện,PLANNED
+WB-TC08,REQ05,"[Phủ lệnh; Phủ nhánh; Phủ đường] submitForReview với status CHANGES_REQUESTED","status=CHANGES_REQUESTED","Bài viết chuyển sang IN_REVIEW và reviewNote bằng null",Chưa thực hiện,PLANNED
+WB-TC09,REQ05,"[Phủ lệnh; Phủ nhánh; Phủ đường] submitForReview với status PUBLISHED","status=PUBLISHED","Ném InvalidOperationException",Chưa thực hiện,PLANNED
+WB-TC10,REQ08,"[Phủ lệnh; Phủ nhánh; Phủ đường] createComment với guest và bài PUBLISHED","articleId=1; userId=null; content=Hợp lệ","Bình luận được tạo ở trạng thái PENDING",Chưa thực hiện,PLANNED
+WB-TC11,REQ08,"[Phủ lệnh; Phủ nhánh; Phủ đường] createComment với user đã đăng nhập","articleId=1; userId=9; content=Hợp lệ","Bình luận gắn với user và lưu commenterName theo tài khoản",Chưa thực hiện,PLANNED
+WB-TC12,REQ08,"[Phủ lệnh; Phủ nhánh; Phủ đường] createComment với bài chưa xuất bản","articleId của bài DRAFT; userId=9; content=Hợp lệ","Ném ResourceNotFoundException",Chưa thực hiện,PLANNED

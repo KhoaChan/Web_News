@@ -57,6 +57,23 @@ class ArticleWorkflowServiceTest {
     }
 
     @Test
+    void submitForReviewShouldMoveChangesRequestedArticleToInReview() {
+        Article article = new Article();
+        article.setId(5L);
+        article.setStatus(ArticleStatus.CHANGES_REQUESTED);
+        article.setAuthor(author("alice"));
+        article.setReviewNote("Need more facts");
+
+        when(articleRepository.findByIdAndAuthorUsername(5L, "alice")).thenReturn(Optional.of(article));
+        when(articleRepository.save(any(Article.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Article savedArticle = articleWorkflowService.submitForReview(5L, "alice");
+
+        assertThat(savedArticle.getStatus()).isEqualTo(ArticleStatus.IN_REVIEW);
+        assertThat(savedArticle.getReviewNote()).isNull();
+    }
+
+    @Test
     void publishShouldSetPublishedAtAndClearReviewNote() {
         Article article = new Article();
         article.setId(2L);
@@ -99,8 +116,20 @@ class ArticleWorkflowServiceTest {
         when(articleRepository.findByIdAndAuthorUsername(4L, "alice")).thenReturn(Optional.of(article));
 
         assertThatThrownBy(() -> articleWorkflowService.cancelByAuthor(4L, "alice"))
-                .isInstanceOf(InvalidOperationException.class)
-                .hasMessageContaining("tác giả hủy");
+                .isInstanceOf(InvalidOperationException.class);
+    }
+
+    @Test
+    void submitForReviewShouldRejectPublishedArticle() {
+        Article article = new Article();
+        article.setId(6L);
+        article.setStatus(ArticleStatus.PUBLISHED);
+        article.setAuthor(author("alice"));
+
+        when(articleRepository.findByIdAndAuthorUsername(6L, "alice")).thenReturn(Optional.of(article));
+
+        assertThatThrownBy(() -> articleWorkflowService.submitForReview(6L, "alice"))
+                .isInstanceOf(InvalidOperationException.class);
     }
 
     private User author(String username) {

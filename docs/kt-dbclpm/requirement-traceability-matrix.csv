@@ -1,0 +1,9 @@
+RequirementID,Description,BlackBoxCases,WhiteBoxCases,AutomationCases
+REQ01,Đăng ký tài khoản,"BB-TC01;BB-TC02;BB-TC03;BB-TC04;BB-TC05;BB-TC06;BB-TC07;BB-TC08;BB-TC09","WB-TC01;WB-TC02",AUTO-TC01
+REQ02,Đăng nhập bằng Username và Password hợp lệ,"BB-TC10;BB-TC11;BB-TC12;BB-TC13;BB-TC14","WB-TC03;WB-TC04;WB-TC05;WB-TC06",AUTO-TC02
+REQ03,Điều hướng giao diện theo vai trò sau khi đăng nhập,"Theo dõi cùng REQ02","Theo dõi cùng REQ02",Theo dõi cùng REQ02
+REQ04,Tìm kiếm bài viết bằng từ khóa,"BB-TC15;BB-TC16;BB-TC17",,AUTO-TC03
+REQ05,Tạo sửa lưu nháp và gửi bài đi duyệt,"BB-TC18;BB-TC19;BB-TC20;BB-TC21","WB-TC07;WB-TC08;WB-TC09",AUTO-TC04
+REQ06,Duyệt hoặc từ chối bình luận,-,-,-
+REQ07,Duyệt bài từ Chờ duyệt sang Đã xuất bản,"BB-TC22;BB-TC23;BB-TC24",,AUTO-TC05
+REQ08,Gửi bình luận vào bài viết đã xuất bản,"BB-TC25;BB-TC26;BB-TC27;BB-TC28","WB-TC10;WB-TC11;WB-TC12",AUTO-TC06

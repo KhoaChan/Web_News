@@ -70,4 +70,22 @@ class AuthServiceTest {
         assertThat(bindingResult.hasFieldErrors("email")).isTrue();
         assertThat(bindingResult.hasFieldErrors("confirmPassword")).isTrue();
     }
+
+    @Test
+    void validateRegistrationFormShouldAcceptUniqueUsernameEmailAndMatchingPasswords() {
+        RegisterForm form = new RegisterForm();
+        form.setUsername("freshreader");
+        form.setEmail("freshreader@example.com");
+        form.setPassword("123456");
+        form.setConfirmPassword("123456");
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(form, "registerForm");
+
+        when(userRepository.existsByUsername("freshreader")).thenReturn(false);
+        when(userRepository.existsByEmail("freshreader@example.com")).thenReturn(false);
+
+        authService.validateRegistrationForm(form, bindingResult);
+
+        assertThat(bindingResult.hasErrors()).isFalse();
+    }
 }

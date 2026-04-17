@@ -1,0 +1,93 @@
+{
+  "id": "3f8f6f74-1d5a-4d89-a379-1f3a2b7a1001",
+  "version": "2.0",
+  "name": "News Smoke",
+  "url": "http://localhost:8080",
+  "tests": [
+    {
+      "id": "d46f5315-0f32-41b0-8df6-913b965f0001",
+      "name": "Open Register Page",
+      "commands": [
+        {
+          "id": "cmd-01",
+          "comment": "",
+          "command": "open",
+          "target": "/register",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "cmd-02",
+          "comment": "",
+          "command": "assertText",
+          "target": "css=.brand",
+          "targets": [],
+          "value": "Đăng ký tài khoản"
+        }
+      ]
+    },
+    {
+      "id": "d46f5315-0f32-41b0-8df6-913b965f0002",
+      "name": "Login Author Smoke",
+      "commands": [
+        {
+          "id": "cmd-11",
+          "comment": "",
+          "command": "open",
+          "target": "/login",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "cmd-12",
+          "comment": "",
+          "command": "type",
+          "target": "name=username",
+          "targets": [],
+          "value": "author"
+        },
+        {
+          "id": "cmd-13",
+          "comment": "",
+          "command": "type",
+          "target": "name=password",
+          "targets": [],
+          "value": "123456"
+        },
+        {
+          "id": "cmd-14",
+          "comment": "",
+          "command": "click",
+          "target": "css=button[type='submit']",
+          "targets": [],
+          "value": ""
+        },
+        {
+          "id": "cmd-15",
+          "comment": "",
+          "command": "assertLocation",
+          "target": "*/author",
+          "targets": [],
+          "value": ""
+        }
+      ]
+    }
+  ],
+  "suites": [
+    {
+      "id": "suite-01",
+      "name": "News Smoke Suite",
+      "persistSession": false,
+      "parallel": false,
+      "timeout": 30000,
+      "tests": [
+        "d46f5315-0f32-41b0-8df6-913b965f0001",
+        "d46f5315-0f32-41b0-8df6-913b965f0002"
+      ]
+    }
+  ],
+  "urls": [
+    "http://localhost:8080"
+  ],
+  "plugins": []
+}

@@ -1,0 +1,17 @@
+Test Case,KQ mong đợi,KQ thực tế,Trạng thái
+BB-TC01,Tạo tài khoản thành công và chuyển về trang đăng nhập,"Đạt như mong đợi theo luồng đăng ký hiện có",PASS
+BB-TC05,Hệ thống báo lỗi confirmPassword,"Đạt như mong đợi theo luồng validation hiện có",PASS
+BB-TC15,Danh sách trả về các bài viết phù hợp với từ khóa,Chưa thực hiện,PENDING
+BB-TC19,Bài viết chuyển sang trạng thái IN_REVIEW,"Đạt như mong đợi theo kiểm tra service workflow",PASS
+BB-TC22,Bài viết chuyển sang PUBLISHED,Chưa thực hiện,PENDING
+BB-TC25,Bình luận được lưu ở trạng thái PENDING,"Đạt như mong đợi theo luồng tạo comment hiện có",PASS
+WB-TC01,BindingResult có lỗi ở confirmPassword username và email,"Đạt như mong đợi theo test service đăng ký",PASS
+WB-TC02,BindingResult không có lỗi,"Đạt như mong đợi theo test service đăng ký",PASS
+WB-TC07,Bài viết chuyển sang IN_REVIEW,"Đạt như mong đợi theo test service workflow",PASS
+WB-TC10,Bình luận được tạo ở trạng thái PENDING,"Đạt như mong đợi theo test service comment",PASS
+AUTO-TC01,Kịch bản tự động đăng ký chạy thành công,Chưa chạy demo local,PENDING
+AUTO-TC02,Kịch bản tự động đăng nhập chạy thành công,Chưa chạy demo local,PENDING
+AUTO-TC03,Kịch bản tự động tìm kiếm chạy thành công,Chưa chạy demo local,PENDING
+AUTO-TC04,Kịch bản tự động workflow tác giả chạy thành công,Chưa chạy demo local,PENDING
+AUTO-TC05,Kịch bản tự động duyệt bài chạy thành công,Chưa chạy demo local,PENDING
+AUTO-TC06,Kịch bản tự động gửi bình luận chạy thành công,Chưa chạy demo local,PENDING

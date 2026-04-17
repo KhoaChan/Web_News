@@ -42,6 +42,20 @@ class CommentModerationServiceTest {
     }
 
     @Test
+    void rejectCommentShouldMovePendingCommentToRejected() {
+        Comment comment = new Comment();
+        comment.setId(3L);
+        comment.setStatus(CommentStatus.PENDING);
+
+        when(commentRepository.findById(3L)).thenReturn(Optional.of(comment));
+        when(commentRepository.save(any(Comment.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Comment rejectedComment = commentModerationService.rejectComment(3L);
+
+        assertThat(rejectedComment.getStatus()).isEqualTo(CommentStatus.REJECTED);
+    }
+
+    @Test
     void rejectCommentShouldFailWhenCommentIsNotPending() {
         Comment comment = new Comment();
         comment.setId(2L);

@@ -17,6 +17,7 @@ import com.example.news.article.service.ArticleQueryService;
 import com.example.news.category.service.CategoryService;
 import com.example.news.comment.service.CommentService;
 import com.example.news.comment.web.CommentForm;
+import com.example.news.common.exception.InvalidOperationException;
 import com.example.news.user.security.NewsUserPrincipal;
 import com.example.news.user.service.ReaderActivityService;
 
@@ -78,6 +79,10 @@ public class PublicArticleController {
             BindingResult bindingResult,
             Model model,
             RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasFieldErrors("articleId")) {
+            throw new InvalidOperationException("Bài viết không hợp lệ.");
+        }
+
         Article article = articleQueryService.getPublishedArticleById(commentForm.getArticleId());
         if (principal != null && (commentForm.getName() == null || commentForm.getName().isBlank())) {
             commentForm.setName(principal.getDisplayName());

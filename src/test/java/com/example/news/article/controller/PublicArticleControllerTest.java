@@ -110,4 +110,16 @@ class PublicArticleControllerTest {
 
         verify(commentService).createComment(any(), eq(null));
     }
+
+    @Test
+    void postCommentShouldReturnBadRequestWhenArticleIdMissing() throws Exception {
+        mockMvc.perform(post("/article/comment")
+                        .param("name", "Lan")
+                        .param("content", "Thiếu articleId"))
+                .andExpect(status().isBadRequest())
+                .andExpect(view().name("error/general"))
+                .andExpect(model().attribute("errorTitle", "Thao tác không hợp lệ"));
+
+        verify(commentService, never()).createComment(any(), any());
+    }
 }
