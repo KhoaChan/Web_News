@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/article/save/**").authenticated()
                 .requestMatchers(
                         "/",
+                        "/api/ai/**",
                         "/category/**",
                         "/article/**",
                         "/search",
