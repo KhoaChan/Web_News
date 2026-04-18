@@ -1,16 +1,32 @@
 Test Case,KQ mong đợi,KQ thực tế,Trạng thái
-BB-TC01,Tạo tài khoản thành công và chuyển về trang đăng nhập,"Đạt như mong đợi theo luồng đăng ký hiện có",PASS
-BB-TC05,Hệ thống báo lỗi confirmPassword,"Đạt như mong đợi theo luồng validation hiện có",PASS
+BB-TC01,Tạo tài khoản thành công và chuyển về trang đăng nhập,POST /register redirect /login?registered và lưu user reader01,PASS
+BB-TC02,Hệ thống báo lỗi username không hợp lệ,Trả về auth/register và BindingResult lỗi field username,PASS
+BB-TC03,Hệ thống báo lỗi trùng username,Trả về auth/register và BindingResult lỗi field username,PASS
+BB-TC04,Hệ thống báo lỗi trùng email,Trả về auth/register và BindingResult lỗi field email,PASS
+BB-TC05,Hệ thống báo lỗi confirmPassword,Trả về auth/register và BindingResult lỗi field confirmPassword,PASS
+BB-TC06,Hệ thống báo lỗi độ dài username,Trả về auth/register và BindingResult lỗi field username,PASS
+BB-TC07,Username được chấp nhận hợp lệ,POST /register redirect /login?registered và lưu user abc,PASS
+BB-TC08,Hệ thống báo lỗi độ dài password,Trả về auth/register và BindingResult lỗi field password,PASS
+BB-TC09,Password được chấp nhận hợp lệ,POST /register redirect /login?registered và lưu user reader09,PASS
+BB-TC10,Người dùng đăng nhập thành công,POST /login với reader/123456 redirect /,PASS
+BB-TC11,Hệ thống quay lại /login?error,POST /login với sai mật khẩu redirect /login?error,PASS
+BB-TC12,Hệ thống quay lại /login?error,POST /login với username không tồn tại redirect /login?error,PASS
+BB-TC13,Hệ thống không cho đăng nhập và giữ ở màn hình login,POST /login với dữ liệu rỗng bị từ chối và redirect /login?error,PASS
+BB-TC14,Hệ thống điều hướng người dùng đã đăng nhập về dashboard phù hợp,GET /login với principal USER redirect /,PASS
 BB-TC15,Danh sách trả về các bài viết phù hợp với từ khóa,Chưa thực hiện,PENDING
-BB-TC19,Bài viết chuyển sang trạng thái IN_REVIEW,"Đạt như mong đợi theo kiểm tra service workflow",PASS
+BB-TC19,Bài viết chuyển sang trạng thái IN_REVIEW,Đạt như mong đợi theo kiểm tra service workflow,PASS
 BB-TC22,Bài viết chuyển sang PUBLISHED,Chưa thực hiện,PENDING
-BB-TC25,Bình luận được lưu ở trạng thái PENDING,"Đạt như mong đợi theo luồng tạo comment hiện có",PASS
-WB-TC01,BindingResult có lỗi ở confirmPassword username và email,"Đạt như mong đợi theo test service đăng ký",PASS
-WB-TC02,BindingResult không có lỗi,"Đạt như mong đợi theo test service đăng ký",PASS
-WB-TC07,Bài viết chuyển sang IN_REVIEW,"Đạt như mong đợi theo test service workflow",PASS
-WB-TC10,Bình luận được tạo ở trạng thái PENDING,"Đạt như mong đợi theo test service comment",PASS
-AUTO-TC01,Kịch bản tự động đăng ký chạy thành công,Chưa chạy demo local,PENDING
-AUTO-TC02,Kịch bản tự động đăng nhập chạy thành công,Chưa chạy demo local,PENDING
+BB-TC25,Bình luận được lưu ở trạng thái PENDING,Đạt như mong đợi theo luồng tạo comment hiện có,PASS
+WB-TC01,BindingResult có lỗi ở confirmPassword username và email,AuthService.validateRegistrationForm gắn lỗi confirmPassword username và email,PASS
+WB-TC02,BindingResult không có lỗi,AuthService.validateRegistrationForm không phát sinh lỗi,PASS
+WB-TC03,Hệ thống redirect về /admin,Đăng nhập admin thành công và redirect /admin,PASS
+WB-TC04,Hệ thống redirect về /editor,Đăng nhập editor thành công và redirect /editor,PASS
+WB-TC05,Hệ thống redirect về /author,Đăng nhập author thành công và redirect /author,PASS
+WB-TC06,Hệ thống redirect về /,Đăng nhập reader thành công và redirect /,PASS
+WB-TC07,Bài viết chuyển sang IN_REVIEW,Đạt như mong đợi theo test service workflow,PASS
+WB-TC10,Bình luận được tạo ở trạng thái PENDING,Đạt như mong đợi theo test service comment,PASS
+AUTO-TC01,Kịch bản tự động đăng ký chạy thành công,Chưa thực thi được trong repo hiện tại vì mới có scaffold Selenium IDE news-smoke.side,PENDING
+AUTO-TC02,Kịch bản tự động đăng nhập chạy thành công,Chưa thực thi được trong repo hiện tại vì chưa có script Playwright login-role-redirect tương ứng,PENDING
 AUTO-TC03,Kịch bản tự động tìm kiếm chạy thành công,Chưa chạy demo local,PENDING
 AUTO-TC04,Kịch bản tự động workflow tác giả chạy thành công,Chưa chạy demo local,PENDING
 AUTO-TC05,Kịch bản tự động duyệt bài chạy thành công,Chưa chạy demo local,PENDING

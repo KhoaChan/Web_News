@@ -32,3 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/application.properties
+.m2/
+automation/playwright/node_modules/
+automation/playwright/playwright-report/
+automation/playwright/test-results/
+automation/cypress/node_modules/

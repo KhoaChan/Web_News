@@ -3,7 +3,11 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:auth": "playwright test tests/login-role-redirect.spec.ts",
+    "test:register": "playwright test tests/register-flow.spec.ts",
+    "test:comment": "playwright test tests/comment-flow.spec.ts",
+    "test:headed": "playwright test --headed"
   },
   "devDependencies": {
     "@playwright/test": "^1.53.0"
