@@ -331,7 +331,3 @@ Nhung diem co the phat trien tiep:
 - Bo sung email/notification neu can day them demo.
 - Hoan thien quy trinh deploy va secret management ro rang hon.
 
-## Ghi chu
-
-- README nay duoc cap nhat theo codebase hien tai sau cac dot refactor, auth, user management, editorial workflow va backoffice UI refresh.
-- Neu README va local config cua ban khac nhau, uu tien xem code va profile dang chay thuc te tren may.
